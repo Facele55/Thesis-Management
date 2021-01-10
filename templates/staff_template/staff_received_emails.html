@@ -1,0 +1,76 @@
+{% extends 'staff_template/base_template.html' %}
+
+{% block page_title %}
+    Sended Emails
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Received Emails</h3>
+                        </div>
+
+                        <div class="card-body">
+                           <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th>#ID</th>
+                                        <th>Subject</th>
+                                        <th>Recipient</th>
+                                        <th>Message</th>
+                                        <th>Status</th>
+                                        <th>Sender</th>
+                                    </tr>
+                                    </thead>
+
+                                    {% for row in rec_emails %}
+                                    <tr>
+                                        <td>{{ row.id }}</td>
+                                        <td>{{ row.subject }}</td>
+                                        <td>{{ row.recipient }}</td>
+                                        <td>{{ row.message }}</td>
+
+                                        <td>
+                                            {{ row.sender_id.id }} {{ row.sender_id.admin.last_name }} {{ row.sender_id.admin.first_name }}
+                                        </td>
+                                        <td>
+                                        {% if row.confirm_status == 0 %}
+                                            <a href="{% url 'staff_choice_approve' result_id=row.id %}" class="btn btn-success">Approve</a>
+                                            <a href="{% url 'staff_choice_reject' result_id=row.id %}" class="btn btn-danger">Reject</a>
+                                        {% elif row.confirm_status == 1 %}
+                                            <button class="btn btn-warning" disabled="disabled">Approved</button>
+                                        {% else %}
+                                            <button class="btn btn-danger" disabled="disabled">Rejected</button>
+                                        {% endif %}
+
+                                    </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+{% endblock custom_js %}
