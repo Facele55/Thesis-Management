@@ -93,7 +93,7 @@ def student_sent_thesisemail(request):
 def sendmail(request):
         if request.method != "POST":
             messages.error(request, "Invalid Method")
-            return redirect('student_apply_choice')
+            return redirect('student_sent_thesisemail')
         else:
             staff = Staffs.objects.all()
             try:
@@ -112,4 +112,4 @@ def sendmail(request):
 
             except:
                 messages.error(request, "Failed to Apply")
-            return redirect('student_apply_choice')
+            return redirect('student_sent_thesisemail')
