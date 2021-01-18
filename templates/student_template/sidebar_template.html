@@ -38,17 +38,6 @@
             </li>
 
               <li class="nav-item">
-              {% url 'contact' as contact %}
-              <a href="{{ contact }}" class="nav-link {% if request.path == contact %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
-                <p>
-                  Contact form
-                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
-                </p>
-              </a>
-            </li>
-
-              <li class="nav-item">
               {% url 'sended_emails' as sended_emails %}
               <a href="{{ sended_emails }}" class="nav-link {% if request.path == sended_emails %} active {% endif %}">
                 <i class="nav-icon fas fa-tasks"></i>
@@ -58,6 +47,17 @@
                 </p>
               </a>
             </li>
+              <li class="nav-item">
+              {% url 'student_sent_thesisemail' as student_sent_thesisemail %}
+              <a href="{{ student_sent_thesisemail }}" class="nav-link {% if request.path == student_sent_thesisemail %} active {% endif %}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                  Choice Thesis
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
+
 
 
 

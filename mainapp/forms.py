@@ -1,6 +1,6 @@
 from django import forms 
 from django.forms import Form
-from mainapp.models import Courses, SessionYearModel
+from mainapp.models import *
 
 
 class DateInput(forms.DateInput):
@@ -91,7 +91,15 @@ class EditStudentForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    to_email = forms.EmailField(required=False)
+  #  to_email = forms.EmailField(required=False)
     subject = forms.CharField(label="Thesis topic", required=True)
     message = forms.CharField(label="Message", widget=forms.Textarea, required=True)
-
+    try:
+        staffs = Staffs.objects.all()
+        staff_list = []
+        for staff in staffs:
+            single_staff = (staff.id, staff.last_name, staff.first_name, staff.email)
+            staff_list.append(single_staff)
+    except:
+        staff_list = []
+    staff_em = forms.ChoiceField(label="Staff", choices=staff_list, widget=forms.Select(attrs={"class": "form-control"}))

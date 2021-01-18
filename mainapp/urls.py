@@ -60,6 +60,8 @@ urlpatterns = [
     path('student_home/', StudentViews.student_home, name="student_home"),
     path('student_profile/', StudentViews.student_profile, name="student_profile"),
     path('student_profile_update/', StudentViews.student_profile_update, name="student_profile_update"),
-    path('contact/', StudentViews.contactView, name='contact'),
     path('sended_emails/', StudentViews.sended_emails, name="sended_emails"),
+    path('student_sent_thesisemail/', StudentViews.student_sent_thesisemail, name="student_sent_thesisemail"),
+    path('sendmail', StudentViews.sendmail, name="sendmail"),
+
 ]

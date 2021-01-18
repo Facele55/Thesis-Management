@@ -72,32 +72,6 @@ def student_profile_update(request):
             return redirect('student_profile')
 
 
-
-
-def contactView(request):
-    if request.method == 'GET':
-        form = ContactForm()
-    else:
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            subject = form.cleaned_data['subject']
-            to_email = form.cleaned_data['to_email']
-            from_email = settings.EMAIL_HOST_USER  # request.user.email # form.cleaned_data['from_email']
-            message = form.cleaned_data['message']
-            student_obj = Students.objects.get(admin_id=request.user.id)
-            try:
-                send_mail(subject, message, from_email, [to_email])
-                sended_emails = SendedEmails(subject=subject, message=message, sender_id=student_obj, recipient=to_email, confirm_status=0)
-                sended_emails.save()
-            except BadHeaderError:
-                messages.error(request, "Failed to Send email !")
-                return redirect('contact')
-            messages.success(request, "Email sent Successfully!")
-            return redirect('contact')
-
-    return render(request, "student_template/contact.html", {'form': form})
-
-
 def sended_emails(request):
     emails = SendedEmails.objects.all()
     student = Students.objects.get(admin_id=request.user.id)
@@ -108,3 +82,34 @@ def sended_emails(request):
     return render(request, "student_template/student_sended_emails.html", context)
 
 
+def student_sent_thesisemail(request):
+    staff = Staffs.objects.all()
+    context = {
+        "staff": staff,
+    }
+    return render(request, 'student_template/student_sent_thesisemail.html', context)
+
+
+def sendmail(request):
+        if request.method != "POST":
+            messages.error(request, "Invalid Method")
+            return redirect('student_apply_choice')
+        else:
+            staff = Staffs.objects.all()
+            try:
+                student_obj = Students.objects.get(admin_id=request.user.id)
+                subject = "You have new thesis assign"
+                msg = request.POST.get('thesis_id')
+                to = request.POST.get('staff_em')
+                res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
+                sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to, confirm_status=0)
+                sended_emails.save()
+                if res == 1:
+                    msg = "Mail Sent Successfuly"
+                else:
+                    msg = "Mail could not sent"
+                return HttpResponse(msg)
+
+            except:
+                messages.error(request, "Failed to Apply")
+            return redirect('student_apply_choice')
