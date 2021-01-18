@@ -1,0 +1,91 @@
+{% extends 'student_template/base_template.html' %}
+
+{% block page_title %}
+    Apply for Thesis
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Apply For Thesis</h3>
+                    </div>
+                    <!-- /.card-header -->
+
+                                {% comment %} Display Messages {% endcomment %}
+                                {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+                            
+                    <form method="POST" action="{% url 'sendmail' %}">
+                        {% csrf_token %}
+                        <div class="card-body">
+
+                            <div class="card-body">
+                            <div class="form-group">
+                                <label>Thesis Topic </label>
+                                <input type="text" class="form-control" name="thesis_id" placeholder="Enter Thesis" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Staff name: </label>
+                                <select name="staff_em" id="staff_em">
+                                    {% for staff in staff %}
+                                        <option value="{{ staff.admin.email }}"> {{ staff.admin.last_name }}   {{ staff.admin.first_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+
+                        </div>
+
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                        <button type="submit" id="sendmail" name="sendmail" class="btn btn-primary">Apply My Choice</button>
+                        </div>
+
+                    </form>
+
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+{% block custom_js %}
+
+{% endblock custom_js %}
