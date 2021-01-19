@@ -43,6 +43,7 @@ urlpatterns = [
     path('hod_received_emails/', HodViews.hod_received_emails, name="hod_received_emails"),
     path('hod_choice_approve/<result_id>/', HodViews.hod_choice_approve, name="hod_choice_approve"),
     path('hod_choice_reject/<result_id>/', HodViews.hod_choice_reject, name="hod_choice_reject"),
+    path('hod_assigned_thesises/', HodViews.hod_assigned_thesises, name="hod_assigned_thesises"),
     
 
 
@@ -55,6 +56,7 @@ urlpatterns = [
     path('staff_received_emails/', StaffViews.staff_received_emails, name="staff_received_emails"),
     path('staff_choice_approve/<result_id>/', StaffViews.staff_choice_approve, name="staff_choice_approve"),
     path('staff_choice_reject/<result_id>/', StaffViews.staff_choice_reject, name="staff_choice_reject"),
+    path('assigned_thesises/', StaffViews.assigned_thesises, name="assigned_thesises"),
 
     # URSL for Student
     path('student_home/', StudentViews.student_home, name="student_home"),
@@ -62,6 +64,5 @@ urlpatterns = [
     path('student_profile_update/', StudentViews.student_profile_update, name="student_profile_update"),
     path('sended_emails/', StudentViews.sended_emails, name="sended_emails"),
     path('student_sent_thesisemail/', StudentViews.student_sent_thesisemail, name="student_sent_thesisemail"),
-    path('sendmail', StudentViews.sendmail, name="sendmail"),
-
+    path('sendmail/', StudentViews.sendmail, name="sendmail"),
 ]

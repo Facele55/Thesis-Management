@@ -23,22 +23,10 @@ def admin_home(request):
     thesis_count_list = []
     student_count_list_in_course = []
 
-    for course in course_all:
-        thesis = Thesis.objects.filter(course_id=course.id).count()
-        students = Students.objects.filter(course_id=course.id).count()
-        course_name_list.append(course.course_name)
-        thesis_count_list.append(thesis)
-        student_count_list_in_course.append(students)
-    
     thesis_all = Thesis.objects.all()
     thesis_list = []
     student_count_list_in_subject = []
-    for thesis in thesis_all:
-        course = Courses.objects.get(id=thesis.course_id.id)
-        student_count = Students.objects.filter(course_id=course.id).count()
-        thesis_list.append(thesis.thesis_name)
-        student_count_list_in_subject.append(student_count)
-    
+
     # For Staffs
     staff_name_list = []
 
@@ -540,6 +528,14 @@ def admin_profile_update(request):
         except:
             messages.error(request, "Failed to Update Profile")
             return redirect('admin_profile')
+
+
+def hod_assigned_thesises(request):
+    thesis = Thesis.objects.all()
+    context = {
+        "thesis": thesis,
+    }
+    return render(request, 'hod_template/hod_assigned_thesises.html', context)
 
 
 def staff_profile(request):

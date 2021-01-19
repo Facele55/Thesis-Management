@@ -44,7 +44,7 @@
                                 </div>
                                 </div>
                                 {% endif %}
-                            
+
                     <form method="POST" action="{% url 'sendmail' %}">
                         {% csrf_token %}
                         <div class="card-body">
@@ -63,14 +63,12 @@
                                     {% endfor %}
                                 </select>
                             </div>
-
-
                         </div>
 
                         <!-- /.card-body -->
 
                         <div class="card-footer">
-                        <button type="submit" id="sendmail" name="sendmail" class="btn btn-primary">Apply My Choice</button>
+                        <button type="submit"   name="sendmail" class="btn btn-primary">Apply My Choice</button>
                         </div>
 
                     </form>

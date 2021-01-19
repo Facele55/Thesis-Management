@@ -133,6 +133,16 @@
                 </p>
               </a>
             </li>
+              <li class="nav-item">
+              {% url 'hod_assigned_thesises' as hod_assigned_thesises %}
+              <a href="{{ hod_assigned_thesises }}" class="nav-link {% if request.path == hod_assigned_thesises %} active {% endif %}">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                    View Assigned Thesis Topics
+                  {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
+                </p>
+              </a>
+            </li>
 
 
           </ul>

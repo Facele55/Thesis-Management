@@ -1,7 +1,7 @@
-{% extends 'student_template/base_template.html' %}
+{% extends 'hod_template/base_template.html' %}
 
 {% block page_title %}
-    Sended Emails
+    Add Result
 {% endblock page_title %}
 
 {% block main_content %}
@@ -11,13 +11,11 @@
 <section class="content">
         <div class="container-fluid">
 
-
-
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Sended Emails</h3>
+                            <h3 class="card-title">Assigned Thesises</h3>
                         </div>
 
                         <div class="card-body">
@@ -25,30 +23,26 @@
                                 <table class="table">
                                     <thead class="thead-light">
                                     <tr>
-                                        <th>Recipient</th>
+                                        <th>#ID</th>
                                         <th>Topic</th>
-                                        <th>Status</th>
+                                        <th>Author</th>
+                                        <th>Supervisor</th>
+
                                     </tr>
                                     </thead>
 
-                                    {% for row in emails %}
-                                        {% if row.sender_id.id == student.id %}
+                                    {% for row in thesis %}
 
                                     <tr>
-                                        <td>{{ row.recipient }} </td>
-                                        <td>{{ row.message }}</td>
-                                        <td>
-                                            {% if row.confirm_status == 1 %}
-                                                <span class="alert alert-success">Approved</span>
-                                            {% elif row.confirm_status == 2 %}
-                                                <span class="alert alert-danger">Rejected</span>
-                                            {% else %}
-                                                <span class="alert alert-warning">Pending</span>
-                                            {% endif %}
-                                        </td>
+                                        <td>{{ row.id }}</td>
+                                        <td>{{ row.thesis_name }}</td>
+                                            <td>
+                                             {{ row.author_id.admin.first_name }} {{ row.author_id.admin.last_name }}
+                                            </td>
+                                            <td>
+                                             {{ row.staff_id.first_name }} {{ row.staff_id.last_name }}
+                                            </td>
                                     </tr>
-                                        {% endif %}
-
                                     {% endfor %}
                                 </table>
                             </div>

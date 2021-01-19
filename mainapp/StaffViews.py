@@ -14,18 +14,7 @@ from mainapp.models import *
 def staff_home(request):
     # Fetching All Students under Staff
     thesises = Thesis.objects.filter(staff_id=request.user.id)
-    course_id_list = []
-    for thesis in thesises:
-        course = Courses.objects.get(id=thesis.course_id.id)
-        course_id_list.append(course.id)
 
-    final_course = []
-    # Removing Duplicate Course Id
-    for course_id in course_id_list:
-        if course_id not in final_course:
-            final_course.append(course_id)
-
-    students_count = Students.objects.filter(course_id__in=final_course).count()
     thesis_count = thesises.count()
 
     # Fetch
@@ -35,17 +24,11 @@ def staff_home(request):
 
     staff = Staffs.objects.get(admin=request.user.id)
 
-    students_all = Students.objects.filter(course_id__in=final_course)
-    student_list = []
-    for student in students_all:
-        student_list.append(student.admin.first_name+" " + student.admin.last_name)
 
 
     context = {
-        "students_count": students_count,
         "thesis_count": thesis_count,
         "thesis_list": thesis_list,
-        "student_list": student_list,
     }
     return render(request, "staff_template/staff_home_template.html", context)
 
@@ -116,17 +99,22 @@ def staff_profile_update(request):
 
 
 def staff_received_emails(request):
+    staff = Staffs.objects.get(admin_id=request.user.id)
     rec_emails = SendedEmails.objects.all()
     context = {
-        "rec_emails": rec_emails
+        "rec_emails": rec_emails,
+        "staff": staff
     }
     return render(request, 'staff_template/staff_received_emails.html', context)
 
 
 def staff_choice_approve(request, result_id):
+    staff = CustomUser.objects.get(id=request.user.id)
     choice = SendedEmails.objects.get(id=result_id)
     choice.confirm_status = 1
     choice.save()
+    thes = Thesis(thesis_name=choice.message, staff_id=staff, author_id=choice.sender_id)
+    thes.save()
     return redirect('staff_received_emails')
 
 
@@ -135,3 +123,13 @@ def staff_choice_reject(request, result_id):
     choice.confirm_status = 2
     choice.save()
     return redirect('staff_received_emails')
+
+
+def assigned_thesises(request):
+    thesis = Thesis.objects.all()
+    staff = Staffs.objects.get(admin_id=request.user.id)
+    context = {
+        "thesis": thesis,
+        "staff": staff
+    }
+    return render(request, 'staff_template/assigned_thesises.html', context)

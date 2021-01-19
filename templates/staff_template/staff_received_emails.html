@@ -17,7 +17,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Received Emails</h3>
+                            <h3 class="card-title">Received Email Requests</h3>
                         </div>
 
                         <div class="card-body">
@@ -25,25 +25,28 @@
                                 <table class="table">
                                     <thead class="thead-light">
                                     <tr>
-                                        <th>#ID</th>
-                                        <th>Subject</th>
-                                        <th>Recipient</th>
-                                        <th>Message</th>
-                                        <th>Sender</th>
+                                         <th>Message</th>
+                                        <th>Sender ID</th>
+                                        <th>Sender Firstname</th>
+                                        <th>Sender Lastname</th>
                                         <th>Status</th>
                                     </tr>
                                     </thead>
 
                                     {% for row in rec_emails %}
                                     <tr>
-                                        <td>{{ row.id }}</td>
-                                        <td>{{ row.subject }}</td>
-                                        <td>{{ row.recipient }}</td>
+                                        {% if row.recipient == staff.admin.email %}
+
+
                                         <td>{{ row.message }}</td>
 
                                         <td>
-                                            {{ row.sender_id.id }} {{ row.sender_id.admin.last_name }} {{ row.sender_id.admin.first_name }}
+                                            {{ row.sender_id.id }}
                                         </td>
+                                            <td>
+                                                {{ row.sender_id.admin.last_name }}
+                                            </td>
+                                            <td> {{ row.sender_id.admin.first_name }}</td>
                                         <td>
                                         {% if row.confirm_status == 0 %}
                                             <a href="{% url 'staff_choice_approve' result_id=row.id %}" class="btn btn-success">Approve</a>
@@ -53,6 +56,7 @@
                                         {% else %}
                                             <button class="btn btn-danger" disabled="disabled">Rejected</button>
                                         {% endif %}
+                                    {% endif %}
 
                                     </td>
 

@@ -1,14 +1,18 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
-from django.core.files.storage import FileSystemStorage # To upload Profile Picture
+from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
+from django.template.loader import render_to_string
 from django.urls import reverse
-import datetime # To Parse input DateTime into Python Date Time Object
+import datetime  # To Parse input DateTime into Python Date Time Object
 from django.shortcuts import render
 from django.conf import settings
+from django.utils.functional import SimpleLazyObject
+
 from djangoProject4.settings import EMAIL_HOST_USER
 from . import forms
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
 
 from mainapp.models import *
 from .forms import ContactForm
@@ -18,16 +22,11 @@ def student_home(request):
     student_obj = Students.objects.get(admin=request.user.id)
 
     course_obj = Courses.objects.get(id=student_obj.course_id.id)
-    total_thesises = Thesis.objects.filter(course_id=course_obj).count()
 
     thesis_name = []
-    thesis_data = Thesis.objects.filter(course_id=student_obj.course_id)
-    for subject in thesis_data:
-        thesis_name.append(subject.thesis_name)
-    
+
+
     context = {
-        "total_thesis": total_thesises,
-        "thesis_name": thesis_name
     }
     return render(request, "student_template/student_home_template.html", context)
 
@@ -64,7 +63,7 @@ def student_profile_update(request):
             student = Students.objects.get(admin=customuser.id)
             student.address = address
             student.save()
-            
+
             messages.success(request, "Profile Updated Successfully")
             return redirect('student_profile')
         except:
@@ -74,10 +73,12 @@ def student_profile_update(request):
 
 def sended_emails(request):
     emails = SendedEmails.objects.all()
+    staff = Staffs.objects.all()
     student = Students.objects.get(admin_id=request.user.id)
     context = {
         "emails": emails,
-        "student": student
+        "student": student,
+        "staff": staff
     }
     return render(request, "student_template/student_sended_emails.html", context)
 
@@ -91,25 +92,35 @@ def student_sent_thesisemail(request):
 
 
 def sendmail(request):
-        if request.method != "POST":
-            messages.error(request, "Invalid Method")
-            return redirect('student_sent_thesisemail')
-        else:
-            staff = Staffs.objects.all()
-            try:
-                student_obj = Students.objects.get(admin_id=request.user.id)
-                subject = "You have new thesis assign"
-                msg = request.POST.get('thesis_id')
-                to = request.POST.get('staff_em')
-                res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
-                sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to, confirm_status=0)
-                sended_emails.save()
-                if res == 1:
-                    msg = "Mail Sent Successfuly"
-                else:
-                    msg = "Mail could not sent"
-                return HttpResponse(msg)
+    if request.method != "POST":
+        messages.error(request, "Invalid Method")
+        return redirect('student_sent_thesisemail')
+    else:
+        staff = Staffs.objects.all()
+        try:
+            student_obj = Students.objects.get(admin_id=request.user.id)
+            sended = SendedEmails.objects.all()
+            subject = "You have new thesis assign"
+            msg = request.POST.get('thesis_id')
+            to = request.POST.get('staff_em')
+            sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to,
+                confirm_status=0)
+            sended_emails.save()
+            text_content = 'Some text'
+            html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong>' + student_obj.admin.last_name + ' ' + student_obj.admin.first_name + '</strong>  choose u to be a supervisor. ' \
+            'Ur thesis topic will be <strong> '+ msg +'</strong>. For Apply or Reject, PLEASE log in to ur account.' \
+            ' / or press links below <a href="'+ request.build_absolute_uri('/staff_received_emails/') + '">'+ request.build_absolute_uri('/staff_received_emails/') +'</a> </body></html>'
+            res = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [to])
+            res.attach_alternative(html_content, "text/html")
+            res.send()
+            # res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
 
-            except:
-                messages.error(request, "Failed to Apply")
-            return redirect('student_sent_thesisemail')
+            if res == 1:
+                msg = "Mail Sent Successfuly"
+            else:
+                msg = "Mail could not be sent.\n Something went wrong, but email was sended"
+            return HttpResponse(msg)
+
+        except:
+            messages.error(request, "Failed to Apply")
+        return redirect('student_sent_thesisemail')

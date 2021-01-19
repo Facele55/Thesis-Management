@@ -45,16 +45,6 @@ class Courses(models.Model):
 # return self.course_name
 
 
-class Thesis(models.Model):
-    id = models.AutoField(primary_key=True)
-    thesis_name = models.CharField(max_length=255)
-    course_id = models.ForeignKey(Courses, on_delete=models.CASCADE, default=1)  # need to give default course
-    staff_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    objects = models.Manager()
-
-
 class Students(models.Model):
     id = models.AutoField(primary_key=True)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -67,6 +57,16 @@ class Students(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
 
+
+class Thesis(models.Model):
+    id = models.AutoField(primary_key=True)
+    thesis_name = models.CharField(max_length=255)
+    author_id = models.ForeignKey(Students, on_delete=models.CASCADE)
+   # course_id = models.ForeignKey(Courses, on_delete=models.CASCADE, default=1)  # need to give default course
+    staff_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
 
 class SendedEmails(models.Model):
     id = models.AutoField(primary_key=True)

@@ -46,8 +46,8 @@
                                         </td>
                                         <td>
                                         {% if row.confirm_status == 0 %}
-                                            <a href="{% url 'hod_choice_approve' result_id=row.id %}" class="btn btn-success">Approve</a>
-                                            <a href="{% url 'hod_choice_reject' result_id=row.id %}" class="btn btn-danger">Reject</a>
+                                            <a href="{% url 'hod_choice_approve' result_id=row.id %}" ></a>
+                                            <a href="{% url 'hod_choice_reject' result_id=row.id %}" ></a>
                                         {% elif row.confirm_status == 1 %}
                                             <button class="btn btn-warning" disabled="disabled">Approved</button>
                                         {% else %}
