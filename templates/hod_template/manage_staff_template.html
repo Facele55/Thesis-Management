@@ -67,6 +67,8 @@
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th>Gender</th>
+                                <th>Profile Pic</th>
                                 <th>Last Login</th>
                                 <th>Date Joined</th>
                                 <th>Action</th>
@@ -81,6 +83,8 @@
                                 <td>{{ staff.admin.username }}</td>
                                 <td>{{ staff.admin.email }}</td>
                                 <td>{{ staff.address }}</td>
+                                <td>{{ staff.gender }}</td>
+                                <td> <img src="{{ staff.profile_pic }}" style="width: 100px;" /> </td>
                                 <td>{{ staff.admin.last_login }}</td>
                                 <td>{{ staff.admin.date_joined }}</td>
                                 <td>

@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 import json
 
-
 from mainapp.models import *
 
 
@@ -23,8 +22,6 @@ def staff_home(request):
         thesis_list.append(thesis.thesis_name)
 
     staff = Staffs.objects.get(admin=request.user.id)
-
-
 
     context = {
         "thesis_count": thesis_count,
@@ -44,12 +41,11 @@ def get_students(request):
     # Getting all data from subject model based on subject_id
     thesis_model = Thesis.objects.get(id=thesis_id)
 
-    session_model = SessionYearModel.objects.get(id=session_year)
 
-    students = Students.objects.filter(course_id=thesis_model.course_id, session_year_id=session_model)
 
     # Only Passing Student Id and Student Name Only
     list_data = []
+    students = Students.objects.all()
 
     for student in students:
         data_small = {"id": student.admin.id, "name": student.admin.first_name+" "+student.admin.last_name}
@@ -64,7 +60,7 @@ def staff_profile(request):
 
     context = {
         "user": user,
-        "staff": staff
+        "staff": staff,
     }
     return render(request, 'staff_template/staff_profile.html', context)
 
@@ -78,6 +74,8 @@ def staff_profile_update(request):
         last_name = request.POST.get('last_name')
         password = request.POST.get('password')
         address = request.POST.get('address')
+
+        gender = request.POST.get('gender')
 
         try:
             customuser = CustomUser.objects.get(id=request.user.id)

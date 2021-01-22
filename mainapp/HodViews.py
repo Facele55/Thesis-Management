@@ -1,27 +1,20 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
-from django.urls import reverse
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
-import json
 
 from mainapp.models import *
-from .forms import AddStudentForm, EditStudentForm
+from .forms import AddStudentForm, EditStudentForm, AddStaffForm, EditStaffForm
 
 
 def admin_home(request):
     all_student_count = Students.objects.all().count()
     thesis_count = Thesis.objects.all().count()
-    course_count = Courses.objects.all().count()
     staff_count = Staffs.objects.all().count()
 
     # Total Subjects and students in Each Course
-    course_all = Courses.objects.all()
-    course_name_list = []
     thesis_count_list = []
-    student_count_list_in_course = []
 
     thesis_all = Thesis.objects.all()
     thesis_list = []
@@ -45,11 +38,8 @@ def admin_home(request):
     context = {
         "all_student_count": all_student_count,
         "thesis_count": thesis_count,
-        "course_count": course_count,
         "staff_count": staff_count,
-        "course_name_list": course_name_list,
         "thesis_count_list": thesis_count_list,
-        "student_count_list_in_course": student_count_list_in_course,
         "thesis_list": thesis_list,
         "student_count_list_in_subject": student_count_list_in_subject,
         "staff_name_list": staff_name_list,
@@ -59,29 +49,53 @@ def admin_home(request):
 
 
 def add_staff(request):
-    return render(request, "hod_template/add_staff_template.html")
+    form = AddStaffForm()
+    context = {
+        "form": form
+    }
+    return render(request, "hod_template/add_staff_template.html", context)
 
 
 def add_staff_save(request):
     if request.method != "POST":
-        messages.error(request, "Invalid Method ")
+        messages.error(request, "Invalid Method")
         return redirect('add_staff')
     else:
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        address = request.POST.get('address')
+        form = AddStaffForm(request.POST, request.FILES)
 
-        try:
-            user = CustomUser.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type=2)
-            user.staffs.address = address
-            user.save()
-            messages.success(request, "Staff Added Successfully!")
-            return redirect('add_staff')
-        except:
-            messages.error(request, "Failed to Add Staff!")
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            address = form.cleaned_data['address']
+            gender = form.cleaned_data['gender']
+
+            # Getting Profile Pic first
+            # First Check whether the file is selected or not
+            # Upload only if file is selected
+            if len(request.FILES) != 0:
+                profile_pic = request.FILES['profile_pic']
+                fs = FileSystemStorage()
+                filename = fs.save(profile_pic.name, profile_pic)
+                profile_pic_url = fs.url(filename)
+            else:
+                profile_pic_url = None
+
+            try:
+                user = CustomUser.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type=2)
+                user.staffs.address = address
+
+                user.staffs.gender = gender
+                user.staffs.profile_pic = profile_pic_url
+                user.save()
+                messages.success(request, "Staff Added Successfully!")
+                return redirect('add_staff')
+            except:
+                messages.error(request, "Failed to Add Staff!")
+                return redirect('add_staff')
+        else:
             return redirect('add_staff')
 
 
@@ -94,196 +108,96 @@ def manage_staff(request):
 
 
 def edit_staff(request, staff_id):
-    staff = Staffs.objects.get(admin=staff_id)
+    # Adding Student ID into Session Variable
+    request.session['staff_id'] = staff_id
+    try:
+        staff = Staffs.objects.get(admin=staff_id)
+        form = EditStaffForm()
+        # Filling the form with Data from Database
+        form.fields['email'].initial = staff.admin.email
+        form.fields['username'].initial = staff.admin.username
+        form.fields['first_name'].initial = staff.admin.first_name
+        form.fields['last_name'].initial = staff.admin.last_name
+        form.fields['address'].initial = staff.address
+        form.fields['gender'].initial = staff.gender
 
-    context = {
-        "staff": staff,
-        "id": staff_id
-    }
+        context = {
+            "id": staff_id,
+            "username": staff.admin.username,
+            "form": form
+        }
+    except Staffs.DoesNotExist:
+        return redirect('manage_staff')
     return render(request, "hod_template/edit_staff_template.html", context)
 
 
 def edit_staff_save(request):
     if request.method != "POST":
-        return HttpResponse("<h2>Method Not Allowed</h2>")
+        return HttpResponse("Invalid Method!")
     else:
-        staff_id = request.POST.get('staff_id')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        address = request.POST.get('address')
+        staff_id = request.session.get('staff_id')
+        if staff_id == None:
+            return redirect('/manage_staff')
+        form = EditStaffForm(request.POST, request.FILES)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            address = form.cleaned_data['address']
+            gender = form.cleaned_data['gender']
 
-        try:
-            # INSERTING into Customuser Model
-            user = CustomUser.objects.get(id=staff_id)
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
-            user.username = username
-            user.save()
-            
-            # INSERTING into Staff Model
-            staff_model = Staffs.objects.get(admin=staff_id)
-            staff_model.address = address
-            staff_model.save()
+            # Getting Profile Pic first
+            # First Check whether the file is selected or not
+            # Upload only if file is selected
+            if len(request.FILES) != 0:
+                profile_pic = request.FILES['profile_pic']
+                fs = FileSystemStorage()
+                filename = fs.save(profile_pic.name, profile_pic)
+                profile_pic_url = fs.url(filename)
+            else:
+                profile_pic_url = None
 
-            messages.success(request, "Staff Updated Successfully.")
-            return redirect('/edit_staff/'+staff_id)
+            try:
+                # First Update into Custom User Model
+                user = CustomUser.objects.get(id=staff_id)
+                user.first_name = first_name
+                user.last_name = last_name
+                user.email = email
+                user.username = username
+                user.save()
 
-        except:
-            messages.error(request, "Failed to Update Staff.")
-            return redirect('/edit_staff/'+staff_id)
+                # Then Update Students Table
+                staff_model = Staffs.objects.get(admin=staff_id)
+                staff_model.address = address
+
+                staff_model.gender = gender
+                if profile_pic_url != None:
+                    staff_model.profile_pic = profile_pic_url
+                staff_model.save()
+                # Delete student_id SESSION after the data is updated
+                del request.session['staff_id']
+
+                messages.success(request, "Staff Updated Successfully!")
+                return redirect('/edit_staff/' + staff_id)
+            except:
+                messages.success(request, "Failed to Update Staff.")
+                return redirect('/edit_staff/' + staff_id)
+        else:
+            return redirect('/edit_staff/' + staff_id)
 
 
 def delete_staff(request, staff_id):
     staff = Staffs.objects.get(admin=staff_id)
+    staff1 = CustomUser.objects.get(id=staff_id)
     try:
         staff.delete()
+        staff1.delete()
         messages.success(request, "Staff Deleted Successfully.")
         return redirect('manage_staff')
     except:
         messages.error(request, "Failed to Delete Staff.")
         return redirect('manage_staff')
-
-
-def add_course(request):
-    return render(request, "hod_template/add_course_template.html")
-
-
-def add_course_save(request):
-    if request.method != "POST":
-        messages.error(request, "Invalid Method!")
-        return redirect('add_course')
-    else:
-        course = request.POST.get('course')
-        try:
-            course_model = Courses(course_name=course)
-            course_model.save()
-            messages.success(request, "Course Added Successfully!")
-            return redirect('add_course')
-        except:
-            messages.error(request, "Failed to Add Course!")
-            return redirect('add_course')
-
-
-def manage_course(request):
-    courses = Courses.objects.all()
-    context = {
-        "courses": courses
-    }
-    return render(request, 'hod_template/manage_course_template.html', context)
-
-
-def edit_course(request, course_id):
-    course = Courses.objects.get(id=course_id)
-    context = {
-        "course": course,
-        "id": course_id
-    }
-    return render(request, 'hod_template/edit_course_template.html', context)
-
-
-def edit_course_save(request):
-    if request.method != "POST":
-        HttpResponse("Invalid Method")
-    else:
-        course_id = request.POST.get('course_id')
-        course_name = request.POST.get('course')
-
-        try:
-            course = Courses.objects.get(id=course_id)
-            course.course_name = course_name
-            course.save()
-
-            messages.success(request, "Course Updated Successfully.")
-            return redirect('/edit_course/'+course_id)
-
-        except:
-            messages.error(request, "Failed to Update Course.")
-            return redirect('/edit_course/'+course_id)
-
-
-def delete_course(request, course_id):
-    course = Courses.objects.get(id=course_id)
-    try:
-        course.delete()
-        messages.success(request, "Course Deleted Successfully.")
-        return redirect('manage_course')
-    except:
-        messages.error(request, "Failed to Delete Course.")
-        return redirect('manage_course')
-
-
-def manage_session(request):
-    session_years = SessionYearModel.objects.all()
-    context = {
-        "session_years": session_years
-    }
-    return render(request, "hod_template/manage_session_template.html", context)
-
-
-def add_session(request):
-    return render(request, "hod_template/add_session_template.html")
-
-
-def add_session_save(request):
-    if request.method != "POST":
-        messages.error(request, "Invalid Method")
-        return redirect('add_course')
-    else:
-        session_start_year = request.POST.get('session_start_year')
-        session_end_year = request.POST.get('session_end_year')
-
-        try:
-            sessionyear = SessionYearModel(session_start_year=session_start_year, session_end_year=session_end_year)
-            sessionyear.save()
-            messages.success(request, "Session Year added Successfully!")
-            return redirect("add_session")
-        except:
-            messages.error(request, "Failed to Add Session Year")
-            return redirect("add_session")
-
-
-def edit_session(request, session_id):
-    session_year = SessionYearModel.objects.get(id=session_id)
-    context = {
-        "session_year": session_year
-    }
-    return render(request, "hod_template/edit_session_template.html", context)
-
-
-def edit_session_save(request):
-    if request.method != "POST":
-        messages.error(request, "Invalid Method!")
-        return redirect('manage_session')
-    else:
-        session_id = request.POST.get('session_id')
-        session_start_year = request.POST.get('session_start_year')
-        session_end_year = request.POST.get('session_end_year')
-
-        try:
-            session_year = SessionYearModel.objects.get(id=session_id)
-            session_year.session_start_year = session_start_year
-            session_year.session_end_year = session_end_year
-            session_year.save()
-
-            messages.success(request, "Session Year Updated Successfully.")
-            return redirect('/edit_session/'+session_id)
-        except:
-            messages.error(request, "Failed to Update Session Year.")
-            return redirect('/edit_session/'+session_id)
-
-
-def delete_session(request, session_id):
-    session = SessionYearModel.objects.get(id=session_id)
-    try:
-        session.delete()
-        messages.success(request, "Session Deleted Successfully.")
-        return redirect('manage_session')
-    except:
-        messages.error(request, "Failed to Delete Session.")
-        return redirect('manage_session')
 
 
 def add_student(request):
@@ -308,8 +222,6 @@ def add_student_save(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             address = form.cleaned_data['address']
-            session_year_id = form.cleaned_data['session_year_id']
-            course_id = form.cleaned_data['course_id']
             gender = form.cleaned_data['gender']
 
             # Getting Profile Pic first
@@ -326,12 +238,6 @@ def add_student_save(request):
             try:
                 user = CustomUser.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type=3)
                 user.students.address = address
-
-                course_obj = Courses.objects.get(id=course_id)
-                user.students.course_id = course_obj
-
-                session_year_obj = SessionYearModel.objects.get(id=session_year_id)
-                user.students.session_year_id = session_year_obj
 
                 user.students.gender = gender
                 user.students.profile_pic = profile_pic_url
@@ -356,24 +262,24 @@ def manage_student(request):
 def edit_student(request, student_id):
     # Adding Student ID into Session Variable
     request.session['student_id'] = student_id
+    try:
+        student = Students.objects.get(admin=student_id)
+        form = EditStudentForm()
+        # Filling the form with Data from Database
+        form.fields['email'].initial = student.admin.email
+        form.fields['username'].initial = student.admin.username
+        form.fields['first_name'].initial = student.admin.first_name
+        form.fields['last_name'].initial = student.admin.last_name
+        form.fields['address'].initial = student.address
+        form.fields['gender'].initial = student.gender
 
-    student = Students.objects.get(admin=student_id)
-    form = EditStudentForm()
-    # Filling the form with Data from Database
-    form.fields['email'].initial = student.admin.email
-    form.fields['username'].initial = student.admin.username
-    form.fields['first_name'].initial = student.admin.first_name
-    form.fields['last_name'].initial = student.admin.last_name
-    form.fields['address'].initial = student.address
-    form.fields['course_id'].initial = student.course_id.id
-    form.fields['gender'].initial = student.gender
-    form.fields['session_year_id'].initial = student.session_year_id.id
-
-    context = {
-        "id": student_id,
-        "username": student.admin.username,
-        "form": form
-    }
+        context = {
+            "id": student_id,
+            "username": student.admin.username,
+            "form": form
+        }
+    except Students.DoesNotExist:
+        return redirect('manage_student')
     return render(request, "hod_template/edit_student_template.html", context)
 
 
@@ -392,9 +298,7 @@ def edit_student_save(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             address = form.cleaned_data['address']
-            course_id = form.cleaned_data['course_id']
             gender = form.cleaned_data['gender']
-            session_year_id = form.cleaned_data['session_year_id']
 
             # Getting Profile Pic first
             # First Check whether the file is selected or not
@@ -420,11 +324,6 @@ def edit_student_save(request):
                 student_model = Students.objects.get(admin=student_id)
                 student_model.address = address
 
-                course = Courses.objects.get(id=course_id)
-                student_model.course_id = course
-
-                session_year_obj = SessionYearModel.objects.get(id=session_year_id)
-                student_model.session_year_id = session_year_obj
 
                 student_model.gender = gender
                 if profile_pic_url != None:
@@ -444,7 +343,7 @@ def edit_student_save(request):
 
 def delete_student(request, student_id):
     student = Students.objects.get(admin=student_id)
-    student1 = CustomUser.objects.filter(user_type=3)
+    student1 = CustomUser.objects.get(id=student_id)
     try:
         student.delete()
         student1.delete()
@@ -500,7 +399,6 @@ def check_username_exist(request):
 
 def admin_profile(request):
     user = CustomUser.objects.get(id=request.user.id)
-
     context = {
         "user": user
     }

@@ -15,14 +15,10 @@ from . import forms
 from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
 
 from mainapp.models import *
-from .forms import ContactForm
 
 
 def student_home(request):
     student_obj = Students.objects.get(admin=request.user.id)
-
-    course_obj = Courses.objects.get(id=student_obj.course_id.id)
-
     thesis_name = []
 
 

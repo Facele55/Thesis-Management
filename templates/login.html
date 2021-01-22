@@ -10,7 +10,7 @@
   </div>
   <!-- /.login-logo -->
   <div class="card">
-
+    {% if not user.request.is_authenticated %}
       <form action="{% url 'doLogin' %}" method="POST">
           {% csrf_token %}
           <div class="input-group mb-3">
@@ -56,6 +56,10 @@
 
           <!-- /.col -->
       </form>
+        {% else  %}
+        {% include 'staff_template/staff_home_template.html' %}
+
+   {% endif %}
 
 
   </div>

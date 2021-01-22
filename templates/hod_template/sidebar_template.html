@@ -78,50 +78,7 @@
               </a>
             </li>
 
-            <li class="nav-item">
-              {% url 'manage_course' as manage_course %}
-              {% url 'edit_course' course_id=id as edit_course %}
-              <a href="{{ manage_course }}" class="nav-link {% if request.path == manage_course %} active {% endif %} {% if request.path == edit_course %} active {% endif %}">
-                <i class="nav-icon fas fa-chalkboard"></i>
-                <p>
-                  Manage Course
-                </p>
-              </a>
-            </li>
 
-            <li class="nav-item">
-            {% url 'add_course' as add_course %}
-              <a href="{{ add_course }}" class="nav-link {% if request.path == add_course %} active {% endif %}">
-                <i class="nav-icon fas fa-th"></i>
-                <p>
-                  Add Course
-                </p>
-              </a>
-            </li>
-
-
-
-
-            <li class="nav-item">
-              {% url 'manage_session' as manage_session %}
-              {% url 'edit_session' session_id=id as edit_session %}
-              <a href="{{ manage_session }}" class="nav-link {% if request.path == manage_session %} active {% endif %} {% if request.path == edit_session %} active {% endif %}">
-                <i class="nav-icon fas fa-graduation-cap"></i>
-                <p>
-                  Manage Session 
-                </p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              {% url 'add_session' as add_session %}
-              <a href="{{ add_session }}" class="nav-link {% if request.path == add_session %} active {% endif %}">
-                <i class="nav-icon fas fa-th"></i>
-                <p>
-                  Add Session
-                </p>
-              </a>
-            </li>
 
               <li class="nav-item">
               {% url 'hod_received_emails' as hod_received_emails %}
@@ -143,7 +100,6 @@
                 </p>
               </a>
             </li>
-
 
           </ul>
         </nav>

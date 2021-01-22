@@ -17,18 +17,14 @@ urlpatterns = [
     path('edit_staff/<staff_id>/', HodViews.edit_staff, name="edit_staff"),
     path('edit_staff_save/', HodViews.edit_staff_save, name="edit_staff_save"),
     path('delete_staff/<staff_id>/', HodViews.delete_staff, name="delete_staff"),
-    path('add_course/', HodViews.add_course, name="add_course"),
-    path('add_course_save/', HodViews.add_course_save, name="add_course_save"),
-    path('manage_course/', HodViews.manage_course, name="manage_course"),
-    path('edit_course/<course_id>/', HodViews.edit_course, name="edit_course"),
-    path('edit_course_save/', HodViews.edit_course_save, name="edit_course_save"),
-    path('delete_course/<course_id>/', HodViews.delete_course, name="delete_course"),
-    path('manage_session/', HodViews.manage_session, name="manage_session"),
-    path('add_session/', HodViews.add_session, name="add_session"),
-    path('add_session_save/', HodViews.add_session_save, name="add_session_save"),
-    path('edit_session/<session_id>', HodViews.edit_session, name="edit_session"),
-    path('edit_session_save/', HodViews.edit_session_save, name="edit_session_save"),
-    path('delete_session/<session_id>/', HodViews.delete_session, name="delete_session"),
+
+    path('add_staff/', HodViews.add_staff, name="add_staff"),
+    path('add_staff_save/', HodViews.add_staff_save, name="add_staff_save"),
+    path('manage_staff/', HodViews.manage_staff, name="manage_staff"),
+    path('edit_staff/<staff_id>/', HodViews.edit_staff, name="edit_staff"),
+    path('edit_staff_save/', HodViews.edit_staff_save, name="edit_staff_save"),
+    path('delete_staff/<staff_id>/', HodViews.delete_staff, name="delete_staff"),
+
     path('add_student/', HodViews.add_student, name="add_student"),
     path('add_student_save/', HodViews.add_student_save, name="add_student_save"),
     path('edit_student/<student_id>', HodViews.edit_student, name="edit_student"),
@@ -44,6 +40,8 @@ urlpatterns = [
     path('hod_choice_approve/<result_id>/', HodViews.hod_choice_approve, name="hod_choice_approve"),
     path('hod_choice_reject/<result_id>/', HodViews.hod_choice_reject, name="hod_choice_reject"),
     path('hod_assigned_thesises/', HodViews.hod_assigned_thesises, name="hod_assigned_thesises"),
+
+
     
 
 

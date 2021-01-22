@@ -13,7 +13,10 @@ def home(request):
 
 
 def loginPage(request):
-    return render(request, 'login.html')
+    if not request.user.is_authenticated:
+        return render(request, 'login.html')
+    else:
+        return redirect('admin_home')
 
 
 
