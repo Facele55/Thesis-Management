@@ -9,41 +9,49 @@ from .forms import AddStudentForm, EditStudentForm, AddStaffForm, EditStaffForm
 
 
 def admin_home(request):
-    all_student_count = Students.objects.all().count()
+    student_count = Students.objects.all().count()
     thesis_count = Thesis.objects.all().count()
     staff_count = Staffs.objects.all().count()
-
-    # Total Subjects and students in Each Course
-    thesis_count_list = []
-
-    thesis_all = Thesis.objects.all()
-    thesis_list = []
-    student_count_list_in_subject = []
+    email_count = SendedEmails.objects.all().count()
 
     # For Staffs
     staff_name_list = []
-
     staffs = Staffs.objects.all()
     for staff in staffs:
-        thesis_id = Thesis.objects.filter(staff_id=staff.admin.id)
         staff_name_list.append(staff.admin.first_name)
 
     # For Students
     student_name_list = []
-
     students = Students.objects.all()
     for student in students:
         student_name_list.append(student.admin.first_name)
 
+    # emails
+    email_status_pending = []
+    email_pen = SendedEmails.objects.filter(confirm_status=0)
+    for email in email_pen:
+        email_status_pending.append(email.confirm_status)
+
+    email_status_approved = []
+    email_app = SendedEmails.objects.filter(confirm_status=1)
+    for email in email_app:
+        email_status_approved.append(email.confirm_status)
+
+    email_status_rejected = []
+    email_rej = SendedEmails.objects.filter(confirm_status=2)
+    for email in email_rej:
+        email_status_rejected.append(email.confirm_status)
+
     context = {
-        "all_student_count": all_student_count,
-        "thesis_count": thesis_count,
+        "student_count": student_count,
         "staff_count": staff_count,
-        "thesis_count_list": thesis_count_list,
-        "thesis_list": thesis_list,
-        "student_count_list_in_subject": student_count_list_in_subject,
-        "staff_name_list": staff_name_list,
-        "student_name_list": student_name_list,
+        "email_count": email_count,
+        "thesis_count": thesis_count,
+
+        "email_status_pending": email_status_pending,
+        "email_status_approved": email_status_approved,
+        "email_status_rejected": email_status_rejected,
+
     }
     return render(request, "hod_template/home_content.html", context)
 

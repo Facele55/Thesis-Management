@@ -18,13 +18,6 @@ urlpatterns = [
     path('edit_staff_save/', HodViews.edit_staff_save, name="edit_staff_save"),
     path('delete_staff/<staff_id>/', HodViews.delete_staff, name="delete_staff"),
 
-    path('add_staff/', HodViews.add_staff, name="add_staff"),
-    path('add_staff_save/', HodViews.add_staff_save, name="add_staff_save"),
-    path('manage_staff/', HodViews.manage_staff, name="manage_staff"),
-    path('edit_staff/<staff_id>/', HodViews.edit_staff, name="edit_staff"),
-    path('edit_staff_save/', HodViews.edit_staff_save, name="edit_staff_save"),
-    path('delete_staff/<staff_id>/', HodViews.delete_staff, name="delete_staff"),
-
     path('add_student/', HodViews.add_student, name="add_student"),
     path('add_student_save/', HodViews.add_student_save, name="add_student_save"),
     path('edit_student/<student_id>', HodViews.edit_student, name="edit_student"),
@@ -40,10 +33,6 @@ urlpatterns = [
     path('hod_choice_approve/<result_id>/', HodViews.hod_choice_approve, name="hod_choice_approve"),
     path('hod_choice_reject/<result_id>/', HodViews.hod_choice_reject, name="hod_choice_reject"),
     path('hod_assigned_thesises/', HodViews.hod_assigned_thesises, name="hod_assigned_thesises"),
-
-
-    
-
 
     # URLS for Staff
     path('staff_home/', StaffViews.staff_home, name="staff_home"),
