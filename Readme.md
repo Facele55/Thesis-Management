@@ -37,6 +37,6 @@ email: student@gmail.com
 password: student
 
 To see how it looks see scrrenshots:
-For Student Home: student_home.png
+For Student Home: ![Screenshot](student_home.png) student_home.png
 For Admin Home: admin_home.png
 For Staff Home: Staff_home.png
