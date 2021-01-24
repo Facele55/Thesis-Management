@@ -35,3 +35,6 @@ password: staff
 for student:
 email: student@gmail.com
 password: student
+
+To see how it looks see
+https://github.com/Facele55/Thesis-Management/blob/master/student_home.png
