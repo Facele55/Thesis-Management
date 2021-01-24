@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib import messages
@@ -14,15 +15,14 @@ def staff_home(request):
     # Fetching All Theses under Staff
     theses = Thesis.objects.filter(staff_id=request.user.id)
     thesis_count = theses.count()
+    staff_obj = Staffs.objects.filter(admin__email=request.user.email).count()
 
     email_count = SendedEmails.objects.all().count()
-
     # emails
+   # email_status_pending = SendedEmails.objects.filter(confirm_status=0).filter(recipient=staff_obj).count()
     email_status_pending = SendedEmails.objects.filter(confirm_status=0).count()
-
-    email_status_approved = SendedEmails.objects.filter(confirm_status=1).count()
-
-    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).count()
+    email_status_approved = SendedEmails.objects.filter(confirm_status=1).filter().count()
+    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).filter().count()
 
 
     # Fetch
@@ -34,36 +34,13 @@ def staff_home(request):
         "thesis_count": thesis_count,
         "thesis_list": thesis_list,
         "email_count": email_count,
+        "staff_obj": staff_obj,
 
         "email_status_pending": email_status_pending,
         "email_status_approved": email_status_approved,
         "email_status_rejected": email_status_rejected,
     }
     return render(request, "staff_template/staff_home_template.html", context)
-
-
-# WE don't need csrf_token when using Ajax
-@csrf_exempt
-def get_students(request):
-    # Getting Values from Ajax POST 'Fetch Student'
-    thesis_id = request.POST.get("thesis")
-    session_year = request.POST.get("session_year")
-
-    # Students enroll to Course, Course has Subjects
-    # Getting all data from subject model based on subject_id
-    thesis_model = Thesis.objects.get(id=thesis_id)
-
-
-
-    # Only Passing Student Id and Student Name Only
-    list_data = []
-    students = Students.objects.all()
-
-    for student in students:
-        data_small = {"id": student.admin.id, "name": student.admin.first_name+" "+student.admin.last_name}
-        list_data.append(data_small)
-
-    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False)
 
 
 def staff_profile(request):
@@ -117,6 +94,35 @@ def staff_received_emails(request):
     }
     return render(request, 'staff_template/staff_received_emails.html', context)
 
+
+def staff_sort_approved(request):
+    staff = Staffs.objects.get(admin_id=request.user.id)
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=1))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'staff_template/staff_received_emails.html', context)
+
+
+def staff_sort_rejected(request):
+    staff = Staffs.objects.get(admin_id=request.user.id)
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=2))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'staff_template/staff_received_emails.html', context)
+
+
+def staff_sort_pending(request):
+    staff = Staffs.objects.get(admin_id=request.user.id)
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=0))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'staff_template/staff_received_emails.html', context)
 
 def staff_choice_approve(request, result_id):
     staff = CustomUser.objects.get(id=request.user.id)

@@ -1,7 +1,7 @@
 {% extends 'staff_template/base_template.html' %}
 
 {% block page_title %}
-    Sended Emails
+    Received Email Requests
 {% endblock page_title %}
 
 {% block main_content %}
@@ -15,9 +15,17 @@
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Received Email Requests</h3>
+                            <div class="card-tools btn-group" data-toggle="buttons">
+                                <a class="btn btn-default active stretched-link" href="{% url 'staff_received_emails' %}">All</a>
+                                <a class="btn btn-success active stretched-link" href="{% url 'staff_sort_approved' %}">Approved</a>
+                                <a class="btn btn-warning active stretched-link" href="{% url 'staff_sort_pending' %}">Pending</a>
+                                <a class="btn btn-danger active stretched-link" href="{% url 'staff_sort_rejected' %}">Rejected</a>
+                            </div>
                         </div>
                         <div class="card-body">
                            <div class="table-responsive">
+                        <div class="col-sm-6">
+                        </div>
                                 <table class="table">
                                     <thead class="thead-light">
                                     <tr>

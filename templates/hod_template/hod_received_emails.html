@@ -18,6 +18,12 @@
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Received Emails</h3>
+                            <div class="card-tools btn-group" data-toggle="buttons">
+                                <a class="btn btn-default active stretched-link" href="{% url 'hod_received_emails' %}">All</a>
+                                <a class="btn btn-success active stretched-link" href="{% url 'hod_sort_approved' %}">Approved</a>
+                                <a class="btn btn-warning active stretched-link" href="{% url 'hod_sort_pending' %}">Pending</a>
+                                <a class="btn btn-danger active stretched-link" href="{% url 'hod_sort_rejected' %}">Rejected</a>
+                            </div>
                         </div>
 
                         <div class="card-body">

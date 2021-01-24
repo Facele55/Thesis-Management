@@ -107,21 +107,20 @@ def sendmail(request):
         staff = Staffs.objects.all()
         try:
             student_obj = Students.objects.get(admin_id=request.user.id)
-            sended = SendedEmails.objects.all()
             subject = "You have new thesis assign"
             msg = request.POST.get('thesis_id')
             to = request.POST.get('staff_em')
-            sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to,
-                confirm_status=0)
-            sended_emails.save()
             text_content = 'Some text'
-            html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong style="color: green;">' + student_obj.admin.last_name\
+            html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong>' + student_obj.admin.last_name\
                 + ' ' + student_obj.admin.first_name + '</strong>  choose you to be a supervisor. ' \
-            ' Your thesis topic will be <strong style="color: red;"> '+ msg +' </strong>. For Apply or Reject, PLEASE Login to your account.' \
+            ' Your thesis topic will be <strong> '+ msg +' </strong>. For Apply or Reject, PLEASE Login to your account.' \
             '/or press links below <a href=" '+ request.build_absolute_uri('/staff_received_emails/') + '">'+ request.build_absolute_uri('/staff_received_emails/') +'</a> </body></html>'
             res = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [to])
             res.attach_alternative(html_content, "text/html")
             res.send()
+            sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to,
+                confirm_status=0)
+            sended_emails.save()
             messages.success(request, "Mail Sent Successfully")
         except SMTPException as e:
             messages.error(request, "There was an error sending an email: ", e)

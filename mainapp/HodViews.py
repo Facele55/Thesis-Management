@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -346,6 +347,36 @@ def hod_received_emails(request):
         "rec_emails": rec_emails
     }
     return render(request, 'hod_template/hod_received_emails.html', context)
+
+def hod_sort_approved(request):
+    staff = Staffs.objects.all()
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=1))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'hod_template/hod_received_emails.html', context)
+
+
+def hod_sort_rejected(request):
+    staff = Staffs.objects.all()
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=2))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'hod_template/hod_received_emails.html', context)
+
+
+def hod_sort_pending(request):
+    staff = Staffs.objects.all()
+    rec_emails = SendedEmails.objects.filter(Q(confirm_status=0))
+    context = {
+        "rec_emails": rec_emails,
+        "staff": staff
+    }
+    return render(request, 'hod_template/hod_received_emails.html', context)
+
 
 
 def hod_choice_approve(request, result_id):

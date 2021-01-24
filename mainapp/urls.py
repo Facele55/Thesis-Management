@@ -34,9 +34,16 @@ urlpatterns = [
     path('hod_choice_reject/<result_id>/', HodViews.hod_choice_reject, name="hod_choice_reject"),
     path('hod_assigned_thesises/', HodViews.hod_assigned_thesises, name="hod_assigned_thesises"),
 
+    path('hod_sort_approved/', HodViews.hod_sort_approved, name="hod_sort_approved"),
+    path('hod_sort_rejected/', HodViews.hod_sort_rejected, name="hod_sort_rejected"),
+    path('hod_sort_pending/', HodViews.hod_sort_pending, name="hod_sort_pending"),
+
     # URLS for Staff
     path('staff_home/', StaffViews.staff_home, name="staff_home"),
-    path('get_students/', StaffViews.get_students, name="get_students"),
+
+    path('staff_sort_approved/', StaffViews.staff_sort_approved, name="staff_sort_approved"),
+    path('staff_sort_rejected/', StaffViews.staff_sort_rejected, name="staff_sort_rejected"),
+    path('staff_sort_pending/', StaffViews.staff_sort_pending, name="staff_sort_pending"),
 
     path('staff_profile/', StaffViews.staff_profile, name="staff_profile"),
     path('staff_profile_update/', StaffViews.staff_profile_update, name="staff_profile_update"),
