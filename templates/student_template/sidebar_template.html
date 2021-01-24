@@ -40,7 +40,7 @@
               <li class="nav-item">
               {% url 'sended_emails' as sended_emails %}
               <a href="{{ sended_emails }}" class="nav-link {% if request.path == sended_emails %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-envelope-open-text"></i>
                 <p>
                   Sended Emails
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
@@ -50,7 +50,7 @@
               <li class="nav-item">
               {% url 'student_sent_thesisemail' as student_sent_thesisemail %}
               <a href="{{ student_sent_thesisemail }}" class="nav-link {% if request.path == student_sent_thesisemail %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-comment"></i>
                 <p>
                   Send Choice Thesis
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}

@@ -14,33 +14,12 @@ def admin_home(request):
     staff_count = Staffs.objects.all().count()
     email_count = SendedEmails.objects.all().count()
 
-    # For Staffs
-    staff_name_list = []
-    staffs = Staffs.objects.all()
-    for staff in staffs:
-        staff_name_list.append(staff.admin.first_name)
-
-    # For Students
-    student_name_list = []
-    students = Students.objects.all()
-    for student in students:
-        student_name_list.append(student.admin.first_name)
-
     # emails
-    email_status_pending = []
-    email_pen = SendedEmails.objects.filter(confirm_status=0)
-    for email in email_pen:
-        email_status_pending.append(email.confirm_status)
+    email_status_pending = SendedEmails.objects.filter(confirm_status=0).count()
 
-    email_status_approved = []
-    email_app = SendedEmails.objects.filter(confirm_status=1)
-    for email in email_app:
-        email_status_approved.append(email.confirm_status)
+    email_status_approved = SendedEmails.objects.filter(confirm_status=1).count()
 
-    email_status_rejected = []
-    email_rej = SendedEmails.objects.filter(confirm_status=2)
-    for email in email_rej:
-        email_status_rejected.append(email.confirm_status)
+    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).count()
 
     context = {
         "student_count": student_count,
@@ -51,7 +30,6 @@ def admin_home(request):
         "email_status_pending": email_status_pending,
         "email_status_approved": email_status_approved,
         "email_status_rejected": email_status_rejected,
-
     }
     return render(request, "hod_template/home_content.html", context)
 

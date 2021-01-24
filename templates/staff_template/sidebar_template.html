@@ -43,7 +43,7 @@
               <li class="nav-item">
               {% url 'staff_received_emails' as staff_received_emails %}
               <a href="{{ staff_received_emails }}" class="nav-link {% if request.path == staff_received_emails %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-envelope-open-text"></i>
                 <p>
                     View Received Emails
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
@@ -54,7 +54,7 @@
               <li class="nav-item">
               {% url 'assigned_thesises' as assigned_thesises %}
               <a href="{{ assigned_thesises }}" class="nav-link {% if request.path == assigned_thesises %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-comments"></i>
                 <p>
                     View Applied Thesis Topics
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}

@@ -20,9 +20,22 @@ from mainapp.models import *
 def student_home(request):
     student_obj = Students.objects.get(admin=request.user.id)
     thesis_name = []
+    email_count = SendedEmails.objects.filter(sender_id=student_obj).count()
+    topic = Thesis.objects.filter(author_id=student_obj).filter()
 
+    # emails
+    email_status_pending = SendedEmails.objects.filter(confirm_status=0).filter(sender_id=student_obj).count()
+
+    email_status_approved = SendedEmails.objects.filter(confirm_status=1).filter(sender_id=student_obj).count()
+
+    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).filter(sender_id=student_obj).count()
 
     context = {
+        "email_count": email_count,
+        "email_status_pending": email_status_pending,
+        "email_status_approved": email_status_approved,
+        "email_status_rejected": email_status_rejected,
+        "topic": topic,
     }
     return render(request, "student_template/student_home_template.html", context)
 

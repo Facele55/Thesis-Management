@@ -11,21 +11,33 @@ from mainapp.models import *
 
 
 def staff_home(request):
-    # Fetching All Students under Staff
-    thesises = Thesis.objects.filter(staff_id=request.user.id)
+    # Fetching All Theses under Staff
+    theses = Thesis.objects.filter(staff_id=request.user.id)
+    thesis_count = theses.count()
 
-    thesis_count = thesises.count()
+    email_count = SendedEmails.objects.all().count()
+
+    # emails
+    email_status_pending = SendedEmails.objects.filter(confirm_status=0).count()
+
+    email_status_approved = SendedEmails.objects.filter(confirm_status=1).count()
+
+    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).count()
+
 
     # Fetch
     thesis_list = []
-    for thesis in thesises:
+    for thesis in theses:
         thesis_list.append(thesis.thesis_name)
-
-    staff = Staffs.objects.get(admin=request.user.id)
 
     context = {
         "thesis_count": thesis_count,
         "thesis_list": thesis_list,
+        "email_count": email_count,
+
+        "email_status_pending": email_status_pending,
+        "email_status_approved": email_status_approved,
+        "email_status_rejected": email_status_rejected,
     }
     return render(request, "staff_template/staff_home_template.html", context)
 

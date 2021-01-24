@@ -83,7 +83,7 @@
               <li class="nav-item">
               {% url 'hod_received_emails' as hod_received_emails %}
               <a href="{{ hod_received_emails }}" class="nav-link {% if request.path == hod_received_emails %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-envelope-open-text"></i>
                 <p>
                     View Received Emails
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
@@ -93,7 +93,7 @@
               <li class="nav-item">
               {% url 'hod_assigned_thesises' as hod_assigned_thesises %}
               <a href="{{ hod_assigned_thesises }}" class="nav-link {% if request.path == hod_assigned_thesises %} active {% endif %}">
-                <i class="nav-icon fas fa-tasks"></i>
+                <i class="nav-icon fas fa-comments"></i>
                 <p>
                     View Assigned Thesis Topics
                   {% comment %} <span class="right badge badge-danger">New</span> {% endcomment %}
