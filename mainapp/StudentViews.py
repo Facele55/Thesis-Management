@@ -1,3 +1,5 @@
+from smtplib import SMTPException
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -113,20 +115,15 @@ def sendmail(request):
                 confirm_status=0)
             sended_emails.save()
             text_content = 'Some text'
-            html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong>' + student_obj.admin.last_name + ' ' + student_obj.admin.first_name + '</strong>  choose u to be a supervisor. ' \
-            'Ur thesis topic will be <strong> '+ msg +'</strong>. For Apply or Reject, PLEASE log in to ur account.' \
-            ' / or press links below <a href="'+ request.build_absolute_uri('/staff_received_emails/') + '">'+ request.build_absolute_uri('/staff_received_emails/') +'</a> </body></html>'
+            html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong style="color: green;">' + student_obj.admin.last_name\
+                + ' ' + student_obj.admin.first_name + '</strong>  choose you to be a supervisor. ' \
+            ' Your thesis topic will be <strong style="color: red;"> '+ msg +' </strong>. For Apply or Reject, PLEASE Login to your account.' \
+            '/or press links below <a href=" '+ request.build_absolute_uri('/staff_received_emails/') + '">'+ request.build_absolute_uri('/staff_received_emails/') +'</a> </body></html>'
             res = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [to])
             res.attach_alternative(html_content, "text/html")
             res.send()
-            # res = send_mail(subject, msg, settings.EMAIL_HOST_USER, [to])
+            messages.success(request, "Mail Sent Successfully")
+        except SMTPException as e:
+            messages.error(request, "There was an error sending an email: ", e)
 
-            if res == 1:
-                msg = "Mail Sent Successfuly"
-            else:
-                msg = "Mail could not be sent.\n Something went wrong, but email was sended"
-            return HttpResponse(msg)
-
-        except:
-            messages.error(request, "Failed to Apply")
         return redirect('student_sent_thesisemail')
