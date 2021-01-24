@@ -69,8 +69,6 @@
                                 <th>Address</th>
                                 <th>Gender</th>
                                 <th>Profile Pic</th>
-                                <th>Last Login</th>
-                                <th>Date Joined</th>
                                 <th>Action</th>
                                 </tr>
                             </thead>
@@ -85,8 +83,6 @@
                                 <td>{{ staff.address }}</td>
                                 <td>{{ staff.gender }}</td>
                                 <td> <img src="{{ staff.profile_pic }}" style="width: 100px;" /> </td>
-                                <td>{{ staff.admin.last_login }}</td>
-                                <td>{{ staff.admin.date_joined }}</td>
                                 <td>
                                     <a href="{% url 'edit_staff' staff.admin.id %}" class="btn btn-success">Edit</a> 
                                     <a href="{% url 'delete_staff' staff.admin.id %}" class="btn btn-danger">Delete</a>

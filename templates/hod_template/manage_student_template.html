@@ -35,7 +35,7 @@
                                     {% endfor %}
                                 </div>
                                 </div>
-                                {% endif %}
+            {% endif %}
 
             <div class="row">
 
@@ -68,7 +68,6 @@
                                 <th>Address</th>
                                 <th>Gender</th>
                                 <th>Profile Pic</th>
-                                <th>Last Login</th>
                                 <th>Date Joined</th>
                                 <th>Action</th>
                                 </tr>
@@ -84,12 +83,12 @@
                                 <td>{{ student.address }}</td>
                                 <td>{{ student.gender }}</td>
                                 <td> <img src="{{ student.profile_pic }}" style="width: 100px;" /> </td>
-z                                <td>{{ student.admin.last_login }}</td>
                                 <td>{{ student.admin.date_joined }}</td>
                                 <td>
-                                    <a href="{% url 'edit_student' student.admin.id %}" class="btn btn-success">Edit</a> 
+                                    <a href="{% url 'edit_student' student.admin.id %}" class="btn btn-success">Edit</a>
                                     <a href="{% url 'delete_student' student.admin.id %}" class="btn btn-danger">Delete</a>
                                 </td>
+
                                 </tr>
                                 {% endfor %}
                                 
