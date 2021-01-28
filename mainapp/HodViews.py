@@ -5,7 +5,14 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
-from mainapp.models import *
+from django.template.loader import get_template
+from django.shortcuts import render
+from io import BytesIO
+from django.http import HttpResponse
+from django.views import View
+from xhtml2pdf import pisa
+
+from .models import *
 from .forms import AddStudentForm, EditStudentForm, AddStaffForm, EditStaffForm
 
 
@@ -15,11 +22,9 @@ def admin_home(request):
     staff_count = Staffs.objects.all().count()
     email_count = SendedEmails.objects.all().count()
 
-    # emails
+    # count emails for charts
     email_status_pending = SendedEmails.objects.filter(confirm_status=0).count()
-
     email_status_approved = SendedEmails.objects.filter(confirm_status=1).count()
-
     email_status_rejected = SendedEmails.objects.filter(confirm_status=2).count()
 
     context = {
@@ -33,6 +38,37 @@ def admin_home(request):
         "email_status_rejected": email_status_rejected,
     }
     return render(request, "hod_template/home_content.html", context)
+
+
+def admin_profile(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    context = {
+        "user": user
+    }
+    return render(request, 'hod_template/admin_profile.html', context)
+
+
+def admin_profile_update(request):
+    if request.method != "POST":
+        messages.error(request, "Invalid Method!")
+        return redirect('admin_profile')
+    else:
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        password = request.POST.get('password')
+
+        try:
+            customuser = CustomUser.objects.get(id=request.user.id)
+            customuser.first_name = first_name
+            customuser.last_name = last_name
+            if password != None and password != "":
+                customuser.set_password(password)
+            customuser.save()
+            messages.success(request, "Profile Updated Successfully")
+            return redirect('admin_profile')
+        except:
+            messages.error(request, "Failed to Update Profile")
+            return redirect('admin_profile')
 
 
 def add_staff(request):
@@ -71,7 +107,8 @@ def add_staff_save(request):
                 profile_pic_url = None
 
             try:
-                user = CustomUser.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type=2)
+                user = CustomUser.objects.create_user(username=username, password=password, email=email,
+                                                      first_name=first_name, last_name=last_name, user_type=2)
                 user.staffs.address = address
 
                 user.staffs.gender = gender
@@ -223,7 +260,8 @@ def add_student_save(request):
                 profile_pic_url = None
 
             try:
-                user = CustomUser.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type=3)
+                user = CustomUser.objects.create_user(username=username, password=password, email=email,
+                                                      first_name=first_name, last_name=last_name, user_type=3)
                 user.students.address = address
 
                 user.students.gender = gender
@@ -311,7 +349,6 @@ def edit_student_save(request):
                 student_model = Students.objects.get(admin=student_id)
                 student_model.address = address
 
-
                 student_model.gender = gender
                 if profile_pic_url != None:
                     student_model.profile_pic = profile_pic_url
@@ -320,12 +357,12 @@ def edit_student_save(request):
                 del request.session['student_id']
 
                 messages.success(request, "Student Updated Successfully!")
-                return redirect('/edit_student/'+student_id)
+                return redirect('/edit_student/' + student_id)
             except:
-                messages.success(request, "Failed to Uupdate Student.")
-                return redirect('/edit_student/'+student_id)
+                messages.success(request, "Failed to Update Student.")
+                return redirect('/edit_student/' + student_id)
         else:
-            return redirect('/edit_student/'+student_id)
+            return redirect('/edit_student/' + student_id)
 
 
 def delete_student(request, student_id):
@@ -341,12 +378,85 @@ def delete_student(request, student_id):
         return redirect('manage_student')
 
 
+def add_course(request):
+    return render(request, "hod_template/add_course_template.html")
+
+
+def add_course_save(request):
+    if request.method != "POST":
+        messages.error(request, "Invalid Method!")
+        return redirect('add_course')
+    else:
+        course = request.POST.get('course')
+        try:
+            course_model = Courses(course_name=course)
+            course_model.save()
+            messages.success(request, "Course Added Successfully!")
+            return redirect('add_course')
+        except:
+            messages.error(request, "Failed to Add Course!")
+            return redirect('add_course')
+
+
+def manage_course(request):
+    courses = Courses.objects.all()
+    context = {
+        "courses": courses
+    }
+    return render(request, 'hod_template/manage_course_template.html', context)
+
+
+def edit_course(request, course_id):
+    request.session['course_id'] = course_id
+    try:
+        course = Courses.objects.get(id=course_id)
+        context = {
+            "course": course,
+            "id": course_id
+        }
+    except Courses.DoesNotExist:
+        return redirect('manage_course')
+    return render(request, 'hod_template/edit_course_template.html', context)
+
+
+def edit_course_save(request):
+    if request.method != "POST":
+        HttpResponse("Invalid Method")
+    else:
+        course_id = request.POST.get('course_id')
+        course_name = request.POST.get('course')
+
+        try:
+            course = Courses.objects.get(id=course_id)
+            course.course_name = course_name
+            course.save()
+
+            messages.success(request, "Course Updated Successfully.")
+            return redirect('/edit_course/'+course_id)
+
+        except:
+            messages.error(request, "Failed to Update Course.")
+            return redirect('/edit_course/'+course_id)
+
+
+def delete_course(request, course_id):
+    course = Courses.objects.get(id=course_id)
+    try:
+        course.delete()
+        messages.success(request, "Course Deleted Successfully.")
+        return redirect('manage_course')
+    except:
+        messages.error(request, "Failed to Delete Course.")
+        return redirect('manage_course')
+
+
 def hod_received_emails(request):
     rec_emails = SendedEmails.objects.all()
     context = {
         "rec_emails": rec_emails
     }
     return render(request, 'hod_template/hod_received_emails.html', context)
+
 
 def hod_sort_approved(request):
     staff = Staffs.objects.all()
@@ -376,7 +486,6 @@ def hod_sort_pending(request):
         "staff": staff
     }
     return render(request, 'hod_template/hod_received_emails.html', context)
-
 
 
 def hod_choice_approve(request, result_id):
@@ -414,43 +523,73 @@ def check_username_exist(request):
         return HttpResponse(False)
 
 
-def admin_profile(request):
-    user = CustomUser.objects.get(id=request.user.id)
-    context = {
-        "user": user
-    }
-    return render(request, 'hod_template/admin_profile.html', context)
+def DownloadPDF(request, id):
+    thesis = Thesis.objects.get(id=id)
+
+    template = get_template("hod_template/hod_assigned_detail.html")
+    html = template.render({"thesis": thesis})
+
+    file = open('Thesis.pdf', "w+b")
+    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                                encoding='utf-8')
+
+    file.seek(0)
+    pdf = file.read()
+    file.close()
+    return HttpResponse(pdf, 'application/pdf')
 
 
-def admin_profile_update(request):
-    if request.method != "POST":
-        messages.error(request, "Invalid Method!")
-        return redirect('admin_profile')
-    else:
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        password = request.POST.get('password')
+def DownloadPDFAll(request):
+    thesis = Thesis.objects.all()
 
-        try:
-            customuser = CustomUser.objects.get(id=request.user.id)
-            customuser.first_name = first_name
-            customuser.last_name = last_name
-            if password != None and password != "":
-                customuser.set_password(password)
-            customuser.save()
-            messages.success(request, "Profile Updated Successfully")
-            return redirect('admin_profile')
-        except:
-            messages.error(request, "Failed to Update Profile")
-            return redirect('admin_profile')
+    template = get_template("hod_template/hod_assigned_all.html")
+    html = template.render({"thesis": thesis})
+
+    file = open('Theses_all.pdf', "w+b")
+    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                                encoding='utf-8')
+
+    file.seek(0)
+    pdf = file.read()
+    file.close()
+    return HttpResponse(pdf, 'application/pdf')
 
 
 def hod_assigned_thesises(request):
     thesis = Thesis.objects.all()
+    student = Students.objects.all()
+    context = {
+        "thesis": thesis,
+        "student": student,
+
+    }
+    return render(request, 'hod_template/hod_assigned_thesises.html', context)
+
+
+def hod_sort_course(request):
+    student = Students.objects.all()
+    thesis = Thesis.objects.all()
+    context = {
+        "student": student,
+        "thesis": thesis
+    }
+    return render(request, 'hod_template/hod_assigned_thesises.html', context)
+
+
+def hod_assigned_detail(request, id):
+    thesis = Thesis.objects.get(id=id)
     context = {
         "thesis": thesis,
     }
-    return render(request, 'hod_template/hod_assigned_thesises.html', context)
+    return render(request, 'hod_template/hod_assigned_detail.html', context)
+
+
+def hod_assigned_thesisesall(request):
+    thesis = Thesis.objects.all()
+    context = {
+        "thesis": thesis,
+    }
+    return render(request, 'hod_template/hod_assigned_all.html', context)
 
 
 def staff_profile(request):
@@ -459,6 +598,3 @@ def staff_profile(request):
 
 def student_profile(request):
     pass
-
-
-

@@ -127,9 +127,10 @@ def staff_sort_pending(request):
 def staff_choice_approve(request, result_id):
     staff = CustomUser.objects.get(id=request.user.id)
     choice = SendedEmails.objects.get(id=result_id)
+   # course = Students.objects.get(course_id=result_id.students.course_id)
     choice.confirm_status = 1
     choice.save()
-    thes = Thesis(thesis_name=choice.message, staff_id=staff, author_id=choice.sender_id)
+    thes = Thesis(thesis_name=choice.message, staff_id=staff, author_id=choice.sender_id, course_id=choice.course_id)
     thes.save()
     return redirect('staff_received_emails')
 

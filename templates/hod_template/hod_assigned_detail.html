@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 5px;
+  text-align: left;
+}
+</style>
+</head>
+
+
+
+
+
+     <h2>Thesis Details</h2>
+
+<table style="width:100%">
+  <tr>
+    <th>Thesis Id:</th>
+ <td>{{ thesis.id }}</td>
+  </tr>
+  <tr>
+    <th>Thesis Name:</th>
+ <td>{{ thesis.thesis_name }}</td>
+  </tr>
+  <tr>
+
+    <th>Author Name:</th>
+ <td>
+     {{ thesis.author_id.admin.first_name }} {{ thesis.author_id.admin.last_name }}
+ </td>
+  </tr>
+
+      <tr>
+    <th>Staff Name:</th>
+ <td>
+     {{ thesis.staff_id.first_name }} {{ thesis.staff_id.last_name }}
+ </td>
+  </tr>
+
+
+
+</table>
+</body>
+
+</html>

@@ -29,12 +29,21 @@ class Staffs(models.Model):
     objects = models.Manager()
 
 
+class Courses(models.Model):
+    id = models.AutoField(primary_key=True)
+    course_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = models.Manager()
+
+
 class Students(models.Model):
     id = models.AutoField(primary_key=True)
     admin = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     gender = models.CharField(max_length=50)
     profile_pic = models.FileField()
     address = models.TextField()
+    course_id = models.ForeignKey(Courses, on_delete=models.DO_NOTHING, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
@@ -45,6 +54,7 @@ class Thesis(models.Model):
     thesis_name = models.CharField(max_length=255)
     author_id = models.ForeignKey(Students, on_delete=models.CASCADE)
     staff_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    course_id = models.ForeignKey(Courses, on_delete=models.DO_NOTHING, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
@@ -57,6 +67,7 @@ class SendedEmails(models.Model):
     message = models.CharField(max_length=255)
     recipient = models.EmailField()
     confirm_status = models.IntegerField(default=0)
+    course_id = models.ForeignKey(Courses, on_delete=models.DO_NOTHING, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
@@ -78,7 +89,7 @@ def create_user_profile(sender, instance, created, **kwargs):
         if instance.user_type == 2:
             Staffs.objects.create(admin=instance, address="", profile_pic="", gender="")
         if instance.user_type == 3:
-            Students.objects.create(admin=instance, address="", profile_pic="", gender="")
+            Students.objects.create(admin=instance, address="", course_id=Courses.objects.get(id=1), profile_pic="", gender="")
     
 
 @receiver(post_save, sender=CustomUser)

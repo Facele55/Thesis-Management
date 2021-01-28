@@ -24,6 +24,14 @@ urlpatterns = [
     path('edit_student_save/', HodViews.edit_student_save, name="edit_student_save"),
     path('manage_student/', HodViews.manage_student, name="manage_student"),
     path('delete_student/<student_id>/', HodViews.delete_student, name="delete_student"),
+    path('add_course/', HodViews.add_course, name="add_course"),
+    path('add_course_save/', HodViews.add_course_save, name="add_course_save"),
+    path('manage_course/', HodViews.manage_course, name="manage_course"),
+    path('edit_course/<course_id>/', HodViews.edit_course, name="edit_course"),
+    path('edit_course_save/', HodViews.edit_course_save, name="edit_course_save"),
+    path('delete_course/<course_id>/', HodViews.delete_course, name="delete_course"),
+    path('hod_sort_course/<c_id>/', HodViews.hod_sort_course, name="hod_sort_course"),
+
 
     path('check_email_exist/', HodViews.check_email_exist, name="check_email_exist"),
     path('check_username_exist/', HodViews.check_username_exist, name="check_username_exist"),
@@ -37,6 +45,12 @@ urlpatterns = [
     path('hod_sort_approved/', HodViews.hod_sort_approved, name="hod_sort_approved"),
     path('hod_sort_rejected/', HodViews.hod_sort_rejected, name="hod_sort_rejected"),
     path('hod_sort_pending/', HodViews.hod_sort_pending, name="hod_sort_pending"),
+
+    
+    path('pdf_download/<int:id>', HodViews.DownloadPDF, name="pdf_download"),
+    path('pdf_downloadall/', HodViews.DownloadPDFAll, name="pdf_downloadall"),
+    path('thesisall/', HodViews.hod_assigned_thesisesall, name="thesisall"),
+
 
     # URLS for Staff
     path('staff_home/', StaffViews.staff_home, name="staff_home"),

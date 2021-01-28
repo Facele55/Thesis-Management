@@ -1,7 +1,7 @@
 {% extends 'hod_template/base_template.html' %}
 
 {% block page_title %}
-    Sended Emails
+    Sent Emails
 {% endblock page_title %}
 
 {% block main_content %}
@@ -36,6 +36,7 @@
                                         <th>Recipient</th>
                                         <th>Message</th>
                                         <th>Sender</th>
+                                        <th>Course</th>
                                         <th>Status</th>
                                     </tr>
                                     </thead>
@@ -50,6 +51,7 @@
                                         <td>
                                             {{ row.sender_id.id }} {{ row.sender_id.admin.last_name }} {{ row.sender_id.admin.first_name }}
                                         </td>
+                                        <td>{{ row.course_id.course_name }}</td>
                                         <td>
                                         {% if row.confirm_status == 0 %}
                                             <button class="btn btn-warning" disabled="disabled">Pending</button>

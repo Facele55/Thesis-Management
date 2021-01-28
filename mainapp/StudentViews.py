@@ -107,6 +107,7 @@ def sendmail(request):
         staff = Staffs.objects.all()
         try:
             student_obj = Students.objects.get(admin_id=request.user.id)
+            #course_obj = Students.objects.get(course_id=student_obj.course_id)
             subject = "You have new thesis assign"
             msg = request.POST.get('thesis_id')
             to = request.POST.get('staff_em')
@@ -119,7 +120,7 @@ def sendmail(request):
             res.attach_alternative(html_content, "text/html")
             res.send()
             sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to,
-                confirm_status=0)
+                confirm_status=0, course_id=student_obj.course_id)
             sended_emails.save()
             messages.success(request, "Mail Sent Successfully")
         except SMTPException as e:

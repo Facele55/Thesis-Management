@@ -27,9 +27,9 @@
                 with font-awesome or any other icon font library -->
 
             <li class="nav-item">
-              {% url 'admin_home' as admin_home %}
+              {% url 'admin_home' as admin_home %} 
               <a href="{{ admin_home }}" class="nav-link {% if request.path == admin_home %} active {% endif %}">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <i class="nav-icon fas fa-home"></i>
                 <p>
                   Home
                 </p>
@@ -50,7 +50,7 @@
             <li class="nav-item">
               {% url 'add_staff' as add_staff %}
               <a href="{{ add_staff }}" class="nav-link {% if request.path == add_staff %} active {% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-user-tie"></i>
                 <p>
                   Add Staff
                 </p>
@@ -71,12 +71,33 @@
             <li class="nav-item">
               {% url 'add_student' as add_student %}
               <a href="{{ add_student }}" class="nav-link {% if request.path == add_student %} active {% endif %}">
-                <i class="nav-icon fas fa-th"></i>
+                <i class="nav-icon fas fa-user-plus"></i>
                 <p>
                   Add Student
                 </p>
               </a>
             </li>
+            <li class="nav-item">
+              {% url 'manage_course' as manage_course %}
+              {% url 'edit_course' course_id=id as edit_course %}
+              <a href="{{ manage_course }}" class="nav-link {% if request.path == manage_course %} active {% endif %} {% if request.path == edit_course %} active {% endif %}">
+                <i class="nav-icon fas fa-chalkboard"></i>
+                <p>
+                  Manage Course
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+            {% url 'add_course' as add_course %}
+              <a href="{{ add_course }}" class="nav-link {% if request.path == add_course %} active {% endif %}">
+                <i class="nav-icon fas fa-th"></i>
+                <p>
+                  Add Course
+                </p>
+              </a>
+            </li>
+
 
 
 
@@ -100,6 +121,7 @@
                 </p>
               </a>
             </li>
+
 
           </ul>
         </nav>

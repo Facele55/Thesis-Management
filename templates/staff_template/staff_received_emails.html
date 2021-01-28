@@ -33,6 +33,7 @@
                                         <th>Sender ID</th>
                                         <th>Sender Firstname</th>
                                         <th>Sender Lastname</th>
+                                        <th>Course</th>
                                         <th>Status</th>
                                     </tr>
                                     </thead>
@@ -48,6 +49,7 @@
                                                 {{ row.sender_id.admin.last_name }}
                                             </td>
                                             <td> {{ row.sender_id.admin.first_name }}</td>
+                                            <td>{{ row.course_id.course_name }}</td>
                                         <td>
                                         {% if row.confirm_status == 0 %}
                                             <a href="{% url 'staff_choice_approve' result_id=row.id %}" class="btn btn-success">Approve</a>
