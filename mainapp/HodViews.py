@@ -1,7 +1,9 @@
+import json
+
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 
@@ -541,9 +543,10 @@ def DownloadPDF(request, id):
 
 def DownloadPDFAll(request):
     thesis = Thesis.objects.all()
+    course = Courses.objects.all()
 
     template = get_template("hod_template/hod_assigned_all.html")
-    html = template.render({"thesis": thesis})
+    html = template.render({"thesis": thesis, "course":  course})
 
     file = open('Theses_all.pdf', "w+b")
     pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
@@ -558,9 +561,11 @@ def DownloadPDFAll(request):
 def hod_assigned_thesises(request):
     thesis = Thesis.objects.all()
     student = Students.objects.all()
+    course = Courses.objects.all()
     context = {
         "thesis": thesis,
         "student": student,
+        "course": course,
 
     }
     return render(request, 'hod_template/hod_assigned_thesises.html', context)
@@ -590,6 +595,32 @@ def hod_assigned_thesisesall(request):
         "thesis": thesis,
     }
     return render(request, 'hod_template/hod_assigned_all.html', context)
+
+
+# WE don't need csrf_token when using Ajax
+@csrf_exempt
+def get_course(request, c_id):
+    # Getting Values from Ajax POST 'Fetch Student'
+    c_id = request.POST.get("c_id")
+    #session_year = request.POST.get("session_year")
+
+    # Students enroll to Course, Course has Subjects
+    # Getting all data from subject model based on subject_id
+    course_model = Courses.objects.get(id=c_id)
+
+    #session_model = SessionYearModel.objects.get(id=session_year)
+
+    students = Students.objects.filter(course_id=course_model.id)
+
+    # Only Passing Student Id and Student Name Only
+    list_data = []
+
+    for student in students:
+        data_small = {"id": student.admin.id, "name": student.admin.first_name+" "+student.admin.last_name}
+        list_data.append(data_small)
+
+    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False)
+
 
 
 def staff_profile(request):

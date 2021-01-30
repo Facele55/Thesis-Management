@@ -31,7 +31,7 @@ urlpatterns = [
     path('edit_course_save/', HodViews.edit_course_save, name="edit_course_save"),
     path('delete_course/<course_id>/', HodViews.delete_course, name="delete_course"),
     path('hod_sort_course/<c_id>/', HodViews.hod_sort_course, name="hod_sort_course"),
-
+    path('get_course/', HodViews.get_course, name="get_course"),
 
     path('check_email_exist/', HodViews.check_email_exist, name="check_email_exist"),
     path('check_username_exist/', HodViews.check_username_exist, name="check_username_exist"),

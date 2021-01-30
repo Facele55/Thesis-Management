@@ -36,6 +36,7 @@ th, td {
                                         <th>#ID</th>
                                         <th>Topic</th>
                                         <th>Author</th>
+                                        <th>Course</th>
                                         <th>Supervisor</th>
 
                                     </tr>
@@ -49,6 +50,7 @@ th, td {
                                             <td>
                                              {{ row.author_id.admin.first_name }} {{ row.author_id.admin.last_name }}
                                             </td>
+                                        <td>{{ row.course_id.course_name }}</td>
                                             <td>
                                              {{ row.staff_id.first_name }} {{ row.staff_id.last_name }}
                                             </td>
