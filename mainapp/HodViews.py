@@ -570,6 +570,21 @@ def hod_assigned_thesises(request):
     return render(request, 'hod_template/hod_assigned_thesises.html', context)
 
 
+
+def hod_sort_course(request, id):
+    try:
+        thesis = Thesis.objects.filter(course_id=id)
+        student = Students.objects.all()
+
+        context = {
+            "thesis": thesis,
+            "student": student,
+        }
+    except Thesis.DoesNotExist:
+        return redirect('hod_assigned_thesises')
+    return render(request, 'hod_template/hod_sorted_course.html', context)
+
+
 def hod_assigned_detail(request, id):
     thesis = Thesis.objects.get(id=id)
     context = {
