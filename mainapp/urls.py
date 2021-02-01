@@ -17,7 +17,7 @@ urlpatterns = [
     path('edit_staff/<staff_id>/', HodViews.edit_staff, name="edit_staff"),
     path('edit_staff_save/', HodViews.edit_staff_save, name="edit_staff_save"),
     path('delete_staff/<staff_id>/', HodViews.delete_staff, name="delete_staff"),
-path('hod_sort_course/<id>/', HodViews.hod_sort_course, name="hod_sort_course"),
+path('hod_sort_course/<cid>/', HodViews.hod_sort_course, name="hod_sort_course"),
     path('add_student/', HodViews.add_student, name="add_student"),
     path('add_student_save/', HodViews.add_student_save, name="add_student_save"),
     path('edit_student/<student_id>', HodViews.edit_student, name="edit_student"),
@@ -47,6 +47,7 @@ path('hod_sort_course/<id>/', HodViews.hod_sort_course, name="hod_sort_course"),
     
     path('pdf_download/<int:id>', HodViews.DownloadPDF, name="pdf_download"),
     path('pdf_downloadall/', HodViews.DownloadPDFAll, name="pdf_downloadall"),
+    path('pdf_downloadcourse/', HodViews.DownloadPDFCourse, name="pdf_downloadcourse"),
     path('thesisall/', HodViews.hod_assigned_thesisesall, name="thesisall"),
 
 

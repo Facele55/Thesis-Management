@@ -558,6 +558,22 @@ def DownloadPDFAll(request):
     return HttpResponse(pdf, 'application/pdf')
 
 
+def DownloadPDFCourse(request):
+    thesis = Thesis.objects.all()
+    course = Courses.objects.filter()
+
+    template = get_template("hod_template/hod_assigned_crs.html")
+    html = template.render({"thesis": thesis, "course":  course})
+
+    file = open('Theses_course.pdf', "w+b")
+    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                                encoding='utf-8')
+    file.seek(0)
+    pdf = file.read()
+    file.close()
+    return HttpResponse(pdf, 'application/pdf')
+
+
 def hod_assigned_thesises(request):
     thesis = Thesis.objects.all()
     student = Students.objects.all()
@@ -571,9 +587,9 @@ def hod_assigned_thesises(request):
 
 
 
-def hod_sort_course(request, id):
+def hod_sort_course(request, cid):
     try:
-        thesis = Thesis.objects.filter(course_id=id)
+        thesis = Thesis.objects.filter(course_id=cid)
         student = Students.objects.all()
 
         context = {
