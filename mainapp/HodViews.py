@@ -566,17 +566,6 @@ def hod_assigned_thesises(request):
         "thesis": thesis,
         "student": student,
         "course": course,
-
-    }
-    return render(request, 'hod_template/hod_assigned_thesises.html', context)
-
-
-def hod_sort_course(request):
-    student = Students.objects.all()
-    thesis = Thesis.objects.all()
-    context = {
-        "student": student,
-        "thesis": thesis
     }
     return render(request, 'hod_template/hod_assigned_thesises.html', context)
 
@@ -595,32 +584,6 @@ def hod_assigned_thesisesall(request):
         "thesis": thesis,
     }
     return render(request, 'hod_template/hod_assigned_all.html', context)
-
-
-# WE don't need csrf_token when using Ajax
-@csrf_exempt
-def get_course(request, c_id):
-    # Getting Values from Ajax POST 'Fetch Student'
-    c_id = request.POST.get("c_id")
-    #session_year = request.POST.get("session_year")
-
-    # Students enroll to Course, Course has Subjects
-    # Getting all data from subject model based on subject_id
-    course_model = Courses.objects.get(id=c_id)
-
-    #session_model = SessionYearModel.objects.get(id=session_year)
-
-    students = Students.objects.filter(course_id=course_model.id)
-
-    # Only Passing Student Id and Student Name Only
-    list_data = []
-
-    for student in students:
-        data_small = {"id": student.admin.id, "name": student.admin.first_name+" "+student.admin.last_name}
-        list_data.append(data_small)
-
-    return JsonResponse(json.dumps(list_data), content_type="application/json", safe=False)
-
 
 
 def staff_profile(request):

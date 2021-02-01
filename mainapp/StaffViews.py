@@ -13,26 +13,16 @@ from mainapp.models import *
 
 def staff_home(request):
     # Fetching All Theses under Staff
-    theses = Thesis.objects.filter(staff_id=request.user.id)
-    thesis_count = theses.count()
-    staff_obj = Staffs.objects.filter(admin__email=request.user.email).count()
-
-    email_count = SendedEmails.objects.all().count()
+    thesis_count = Thesis.objects.filter(Q(staff_id=request.user.id)).count()
+    staff_obj = Staffs.objects.filter(id=request.user.id)
+    email_count = SendedEmails.objects.filter(Q(recipient=request.user.email)).count()
     # emails
-   # email_status_pending = SendedEmails.objects.filter(confirm_status=0).filter(recipient=staff_obj).count()
-    email_status_pending = SendedEmails.objects.filter(confirm_status=0).count()
-    email_status_approved = SendedEmails.objects.filter(confirm_status=1).filter().count()
-    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).filter().count()
-
-
-    # Fetch
-    thesis_list = []
-    for thesis in theses:
-        thesis_list.append(thesis.thesis_name)
+    email_status_pending = SendedEmails.objects.filter(confirm_status=0).filter(Q(recipient=request.user.email)).count()
+    email_status_approved = SendedEmails.objects.filter(confirm_status=1).filter(Q(recipient=request.user.email)).count()
+    email_status_rejected = SendedEmails.objects.filter(confirm_status=2).filter(Q(recipient=request.user.email)).count()
 
     context = {
         "thesis_count": thesis_count,
-        "thesis_list": thesis_list,
         "email_count": email_count,
         "staff_obj": staff_obj,
 
@@ -124,10 +114,10 @@ def staff_sort_pending(request):
     }
     return render(request, 'staff_template/staff_received_emails.html', context)
 
+
 def staff_choice_approve(request, result_id):
     staff = CustomUser.objects.get(id=request.user.id)
     choice = SendedEmails.objects.get(id=result_id)
-   # course = Students.objects.get(course_id=result_id.students.course_id)
     choice.confirm_status = 1
     choice.save()
     thes = Thesis(thesis_name=choice.message, staff_id=staff, author_id=choice.sender_id, course_id=choice.course_id)
