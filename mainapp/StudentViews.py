@@ -15,19 +15,16 @@ from django.utils.functional import SimpleLazyObject
 from djangoProject4.settings import EMAIL_HOST_USER
 from . import forms
 from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
-
 from mainapp.models import *
 
 
 def student_home(request):
     student_obj = Students.objects.get(admin=request.user.id)
+# count sent emails
     email_count = SendedEmails.objects.filter(sender_id=student_obj).count()
-
-    # emails
+# If student sent email it will show as a result for assigned thesis or not
     email_status_pending = SendedEmails.objects.filter(confirm_status=0).filter(sender_id=student_obj).count()
-
     email_status_approved = SendedEmails.objects.filter(confirm_status=1).filter(sender_id=student_obj).count()
-
     email_status_rejected = SendedEmails.objects.filter(confirm_status=2).filter(sender_id=student_obj).count()
 
     context = {
@@ -42,7 +39,6 @@ def student_home(request):
 def student_profile(request):
     user = CustomUser.objects.get(id=request.user.id)
     student = Students.objects.get(admin=user)
-
     context = {
         "user": user,
         "student": student
@@ -99,15 +95,14 @@ def student_sent_thesisemail(request):
     return render(request, 'student_template/student_sent_thesisemail.html', context)
 
 
+#  Function for sending emails
 def sendmail(request):
     if request.method != "POST":
         messages.error(request, "Invalid Method")
         return redirect('student_sent_thesisemail')
     else:
-        staff = Staffs.objects.all()
         try:
             student_obj = Students.objects.get(admin_id=request.user.id)
-            #course_obj = Students.objects.get(course_id=student_obj.course_id)
             subject = "You have new thesis assign"
             msg = request.POST.get('thesis_id')
             to = request.POST.get('staff_em')
@@ -120,7 +115,7 @@ def sendmail(request):
             res.attach_alternative(html_content, "text/html")
             res.send()
             sended_emails = SendedEmails(subject=subject, message=msg, sender_id=student_obj, recipient=to,
-                confirm_status=0, course_id=student_obj.course_id)
+                                         confirm_status=0, course_id=student_obj.course_id)
             sended_emails.save()
             messages.success(request, "Mail Sent Successfully")
         except SMTPException as e:

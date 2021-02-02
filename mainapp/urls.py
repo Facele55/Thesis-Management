@@ -36,8 +36,6 @@ path('hod_sort_course/<cid>/', HodViews.hod_sort_course, name="hod_sort_course")
     path('admin_profile/', HodViews.admin_profile, name="admin_profile"),
     path('admin_profile_update/', HodViews.admin_profile_update, name="admin_profile_update"),
     path('hod_received_emails/', HodViews.hod_received_emails, name="hod_received_emails"),
-    path('hod_choice_approve/<result_id>/', HodViews.hod_choice_approve, name="hod_choice_approve"),
-    path('hod_choice_reject/<result_id>/', HodViews.hod_choice_reject, name="hod_choice_reject"),
     path('hod_assigned_thesises/', HodViews.hod_assigned_thesises, name="hod_assigned_thesises"),
 
     path('hod_sort_approved/', HodViews.hod_sort_approved, name="hod_sort_approved"),

@@ -19,6 +19,7 @@ from .forms import AddStudentForm, EditStudentForm, AddStaffForm, EditStaffForm
 
 
 def admin_home(request):
+    # counts for cards at admin home
     student_count = Students.objects.all().count()
     thesis_count = Thesis.objects.all().count()
     staff_count = Staffs.objects.all().count()
@@ -73,6 +74,7 @@ def admin_profile_update(request):
             return redirect('admin_profile')
 
 
+# Staff section: adding, editing, managing staffs
 def add_staff(request):
     form = AddStaffForm()
     context = {
@@ -226,6 +228,7 @@ def delete_staff(request, staff_id):
         return redirect('manage_staff')
 
 
+# Student section: adding, editing, managing students
 def add_student(request):
     form = AddStudentForm()
     context = {
@@ -380,6 +383,7 @@ def delete_student(request, student_id):
         return redirect('manage_student')
 
 
+# Course section: adding, editing, managing courses
 def add_course(request):
     return render(request, "hod_template/add_course_template.html")
 
@@ -452,6 +456,7 @@ def delete_course(request, course_id):
         return redirect('manage_course')
 
 
+# Received emails. ALL emails in this system
 def hod_received_emails(request):
     rec_emails = SendedEmails.objects.all()
     context = {
@@ -460,6 +465,21 @@ def hod_received_emails(request):
     return render(request, 'hod_template/hod_received_emails.html', context)
 
 
+# Appled theses by staffs
+def hod_assigned_thesises(request):
+    thesis = Thesis.objects.all()
+    student = Students.objects.all()
+    course = Courses.objects.all()
+    context = {
+        "thesis": thesis,
+        "student": student,
+        "course": course,
+    }
+    return render(request, 'hod_template/hod_assigned_thesises.html', context)
+
+
+# Sorting buttons
+# sort emails by approved status
 def hod_sort_approved(request):
     staff = Staffs.objects.all()
     rec_emails = SendedEmails.objects.filter(Q(confirm_status=1))
@@ -470,6 +490,7 @@ def hod_sort_approved(request):
     return render(request, 'hod_template/hod_received_emails.html', context)
 
 
+# sort emails by rejected status
 def hod_sort_rejected(request):
     staff = Staffs.objects.all()
     rec_emails = SendedEmails.objects.filter(Q(confirm_status=2))
@@ -480,6 +501,7 @@ def hod_sort_rejected(request):
     return render(request, 'hod_template/hod_received_emails.html', context)
 
 
+# sort emails by pending status
 def hod_sort_pending(request):
     staff = Staffs.objects.all()
     rec_emails = SendedEmails.objects.filter(Q(confirm_status=0))
@@ -490,21 +512,7 @@ def hod_sort_pending(request):
     return render(request, 'hod_template/hod_received_emails.html', context)
 
 
-def hod_choice_approve(request, result_id):
-    choice = SendedEmails.objects.get(id=result_id)
-    choice.confirm_status = 1
-    choice.save()
-    return redirect('hod_received_emails')
-
-
-def hod_choice_reject(request, result_id):
-    choice = SendedEmails.objects.get(id=result_id)
-    choice.confirm_status = 2
-    choice.save()
-    return redirect('hod_received_emails')
-
-
-
+#  Button
 @csrf_exempt
 def check_email_exist(request):
     email = request.POST.get("email")
@@ -525,6 +533,8 @@ def check_username_exist(request):
         return HttpResponse(False)
 
 
+#  Downloading files in Assigned theses section
+#  Downloads information about thesis, author and supervisor by individual ID
 def DownloadPDF(request, id):
     thesis = Thesis.objects.get(id=id)
 
@@ -532,15 +542,14 @@ def DownloadPDF(request, id):
     html = template.render({"thesis": thesis})
 
     file = open('Thesis.pdf', "w+b")
-    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                                encoding='utf-8')
-
+    pisa.CreatePDF(html.encode('utf-8'), dest=file, encoding='utf-8')
     file.seek(0)
     pdf = file.read()
     file.close()
     return HttpResponse(pdf, 'application/pdf')
 
 
+#  Downloads all data from Thesis table
 def DownloadPDFAll(request):
     thesis = Thesis.objects.all()
     course = Courses.objects.all()
@@ -549,8 +558,7 @@ def DownloadPDFAll(request):
     html = template.render({"thesis": thesis, "course":  course})
 
     file = open('Theses_all.pdf', "w+b")
-    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                                encoding='utf-8')
+    pisa.CreatePDF(html.encode('utf-8'), dest=file, encoding='utf-8')
 
     file.seek(0)
     pdf = file.read()
@@ -558,6 +566,7 @@ def DownloadPDFAll(request):
     return HttpResponse(pdf, 'application/pdf')
 
 
+# Downloads data about particular course
 def DownloadPDFCourse(request):
     thesis = Thesis.objects.all()
     course = Thesis.objects.filter()
@@ -565,7 +574,7 @@ def DownloadPDFCourse(request):
     html = template.render({"thesis": thesis, "course":  course})
 
     file = open('Theses_course.pdf', "w+b")
-    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+    pisa.CreatePDF(html.encode('utf-8'), dest=file,
                                 encoding='utf-8')
     file.seek(0)
     pdf = file.read()
@@ -573,32 +582,7 @@ def DownloadPDFCourse(request):
     return HttpResponse(pdf, 'application/pdf')
 
 
-def hod_assigned_thesises(request):
-    thesis = Thesis.objects.all()
-    student = Students.objects.all()
-    course = Courses.objects.all()
-    context = {
-        "thesis": thesis,
-        "student": student,
-        "course": course,
-    }
-    return render(request, 'hod_template/hod_assigned_thesises.html', context)
-
-
-def hod_sort_course(request, cid):
-    try:
-        thesis = Thesis.objects.filter(course_id=cid)
-        student = Students.objects.all()
-
-        context = {
-            "thesis": thesis,
-            "student": student,
-        }
-    except Thesis.DoesNotExist:
-        return redirect('hod_assigned_thesises')
-    return render(request, 'hod_template/hod_sorted_course.html', context)
-
-
+# Additional files for downloading pdf
 def hod_assigned_detail(request, id):
     thesis = Thesis.objects.get(id=id)
     context = {
@@ -613,6 +597,20 @@ def hod_assigned_thesisesall(request):
         "thesis": thesis,
     }
     return render(request, 'hod_template/hod_assigned_all.html', context)
+
+
+def hod_sort_course(request, cid):
+    try:
+        thesis = Thesis.objects.filter(course_id=cid)
+        student = Students.objects.all()
+
+        context = {
+            "thesis": thesis,
+            "student": student,
+        }
+    except Thesis.DoesNotExist:
+        return redirect('hod_assigned_thesises')
+    return render(request, 'hod_template/hod_sorted_course.html', context)
 
 
 def staff_profile(request):
