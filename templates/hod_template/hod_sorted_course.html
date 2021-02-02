@@ -12,12 +12,18 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <a class="btn btn-default active stretched-link" href="{% url 'hod_assigned_thesises' %} ">All</a>
+                        <div class="card-header">
+                            <div class="card-tools btn-group" data-toggle="buttons">
+                                <a class="btn btn-default active stretched-link" href="{% url 'hod_assigned_thesises' %} ">All</a>
+                            </div>
+                        </div>
                     <div class="card card-primary">
                         <div class="card-header">
                             <h3 class="card-title">Assigned Theses</h3>
-                            <a class="fas fa-download card-tools " href="{% url 'pdf_downloadcourse'  %}">DownloadAll C</a>
+                             <div class="card-tools btn-group" data-toggle="buttons"></div>
+                            <a class="fas fa-download card-tools " href="{% url 'pdf_downloadcourse'  %}">Download Courses</a>
                         </div>
+
                         <div class="card-body">
                            <div class="table-responsive">
                                 <table class="table">
@@ -46,7 +52,6 @@
                                         <td>
                                             <a class="fas fa-download" href="{% url 'pdf_download' row.id %}">Download</a>
                                         </td>
-
                                     </tr>
                                     {% endfor %}
                                 </table>

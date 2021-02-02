@@ -560,8 +560,7 @@ def DownloadPDFAll(request):
 
 def DownloadPDFCourse(request):
     thesis = Thesis.objects.all()
-    course = Courses.objects.filter()
-
+    course = Thesis.objects.filter()
     template = get_template("hod_template/hod_assigned_crs.html")
     html = template.render({"thesis": thesis, "course":  course})
 
@@ -584,7 +583,6 @@ def hod_assigned_thesises(request):
         "course": course,
     }
     return render(request, 'hod_template/hod_assigned_thesises.html', context)
-
 
 
 def hod_sort_course(request, cid):
