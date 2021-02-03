@@ -12,16 +12,18 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                        <div class="card-header">
                             <div class="card-tools btn-group" data-toggle="buttons">
                                 <a class="btn btn-default active stretched-link" href="{% url 'hod_assigned_thesises' %} ">All</a>
                             </div>
-                        </div>
-                    <div class="card card-primary">
-                        <div class="card-header">
+                    <div class="card card-primary"><div class="card-header">
                             <h3 class="card-title">Assigned Theses</h3>
-                             <div class="card-tools btn-group" data-toggle="buttons"></div>
-                            <a class="fas fa-download card-tools " href="{% url 'pdf_downloadcourse'  %}">Download Courses</a>
+                            <div class="card-tools btn-group" data-toggle="buttons">
+                            </div>
+                        {% for c in thesis %}
+                            {% if forloop.counter <= 1 %}
+                                <a class="fas fa-download card-tools" id="" href="{%  url 'pdf_downloadcourse' c.course_id.id %}">Download Courses</a>
+                            {% endif %}
+                        {% endfor %}
                         </div>
 
                         <div class="card-body">
@@ -37,7 +39,6 @@
                                         <th>Thesis Download</th>
                                     </tr>
                                     </thead>
-
                                     {% for row in thesis %}
                                     <tr>
                                         <td>{{ row.id }}</td>
@@ -54,6 +55,7 @@
                                         </td>
                                     </tr>
                                     {% endfor %}
+
                                 </table>
                             </div>
                         </div>

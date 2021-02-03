@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Thesis Detail</title>
     <style>
 table, th, td {
   border: 1px solid black;
@@ -14,13 +14,7 @@ th, td {
 }
 </style>
 </head>
-
-
-
-
-
      <h2>Thesis Details</h2>
-
 <table style="width:100%">
   <tr>
     <th>Thesis Id:</th>
@@ -31,29 +25,23 @@ th, td {
  <td>{{ thesis.thesis_name }}</td>
   </tr>
   <tr>
-
     <th>Author Name:</th>
  <td>
      {{ thesis.author_id.admin.first_name }} {{ thesis.author_id.admin.last_name }}
  </td>
   </tr>
-
       <tr>
     <th>Staff Name:</th>
  <td>
      {{ thesis.staff_id.first_name }} {{ thesis.staff_id.last_name }}
  </td>
   </tr>
-
       <tr>
     <th>Course:</th>
  <td>
      {{ thesis.course_id.course_name }}
  </td>
   </tr>
-
-
-
 </table>
 </body>
 

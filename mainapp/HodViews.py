@@ -512,27 +512,6 @@ def hod_sort_pending(request):
     return render(request, 'hod_template/hod_received_emails.html', context)
 
 
-#  Button
-@csrf_exempt
-def check_email_exist(request):
-    email = request.POST.get("email")
-    user_obj = CustomUser.objects.filter(email=email).exists()
-    if user_obj:
-        return HttpResponse(True)
-    else:
-        return HttpResponse(False)
-
-
-@csrf_exempt
-def check_username_exist(request):
-    username = request.POST.get("username")
-    user_obj = CustomUser.objects.filter(username=username).exists()
-    if user_obj:
-        return HttpResponse(True)
-    else:
-        return HttpResponse(False)
-
-
 #  Downloading files in Assigned theses section
 #  Downloads information about thesis, author and supervisor by individual ID
 def DownloadPDF(request, id):
@@ -552,14 +531,11 @@ def DownloadPDF(request, id):
 #  Downloads all data from Thesis table
 def DownloadPDFAll(request):
     thesis = Thesis.objects.all()
-    course = Courses.objects.all()
-
     template = get_template("hod_template/hod_assigned_all.html")
-    html = template.render({"thesis": thesis, "course":  course})
+    html = template.render({"thesis": thesis})
 
     file = open('Theses_all.pdf', "w+b")
     pisa.CreatePDF(html.encode('utf-8'), dest=file, encoding='utf-8')
-
     file.seek(0)
     pdf = file.read()
     file.close()
@@ -567,15 +543,13 @@ def DownloadPDFAll(request):
 
 
 # Downloads data about particular course
-def DownloadPDFCourse(request):
-    thesis = Thesis.objects.all()
-    course = Thesis.objects.filter()
+def DownloadPDFCourse(request, ccid):
+    thesis = Thesis.objects.filter(course_id=ccid)
     template = get_template("hod_template/hod_assigned_crs.html")
-    html = template.render({"thesis": thesis, "course":  course})
+    html = template.render({"thesis": thesis})
 
     file = open('Theses_course.pdf', "w+b")
-    pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                                encoding='utf-8')
+    pisa.CreatePDF(html.encode('utf-8'), dest=file, encoding='utf-8')
     file.seek(0)
     pdf = file.read()
     file.close()
@@ -602,20 +576,31 @@ def hod_assigned_thesisesall(request):
 def hod_sort_course(request, cid):
     try:
         thesis = Thesis.objects.filter(course_id=cid)
-        student = Students.objects.all()
 
         context = {
             "thesis": thesis,
-            "student": student,
         }
     except Thesis.DoesNotExist:
         return redirect('hod_assigned_thesises')
     return render(request, 'hod_template/hod_sorted_course.html', context)
 
 
-def staff_profile(request):
-    pass
+#  Checking for existing email and username  for preventing double login
+@csrf_exempt
+def check_email_exist(request):
+    email = request.POST.get("email")
+    user_obj = CustomUser.objects.filter(email=email).exists()
+    if user_obj:
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)
 
 
-def student_profile(request):
-    pass
+@csrf_exempt
+def check_username_exist(request):
+    username = request.POST.get("username")
+    user_obj = CustomUser.objects.filter(username=username).exists()
+    if user_obj:
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)

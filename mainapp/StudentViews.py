@@ -109,8 +109,11 @@ def sendmail(request):
             text_content = 'Some text'
             html_content = '<html><body><h3>' + subject + ' </h3> Student  <strong>' + student_obj.admin.last_name\
                 + ' ' + student_obj.admin.first_name + '</strong>  choose you to be a supervisor. ' \
-            ' Your thesis topic will be <strong> '+ msg +' </strong>. For Apply or Reject, PLEASE Login to your account.' \
-            '/or press links below <a href=" '+ request.build_absolute_uri('/staff_received_emails/') + '">'+ request.build_absolute_uri('/staff_received_emails/') +'</a> </body></html>'
+                                                       ' Your thesis topic will be <strong> ' + msg + \
+                           ' </strong>. For Apply or Reject, PLEASE Login to your account.'\
+                           '/or press links below <a href=" ' \
+                           + request.build_absolute_uri('/staff_received_emails/') + '">' \
+                           + request.build_absolute_uri('/staff_received_emails/') + '</a> </body></html>'
             res = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [to])
             res.attach_alternative(html_content, "text/html")
             res.send()

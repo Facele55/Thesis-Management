@@ -45,7 +45,7 @@ path('hod_sort_course/<cid>/', HodViews.hod_sort_course, name="hod_sort_course")
     
     path('pdf_download/<int:id>', HodViews.DownloadPDF, name="pdf_download"),
     path('pdf_downloadall/', HodViews.DownloadPDFAll, name="pdf_downloadall"),
-    path('pdf_downloadcourse/', HodViews.DownloadPDFCourse, name="pdf_downloadcourse"),
+    path('pdf_downloadcourse/<int:ccid>/', HodViews.DownloadPDFCourse, name="pdf_downloadcourse"),
     path('thesisall/', HodViews.hod_assigned_thesisesall, name="thesisall"),
 
 
