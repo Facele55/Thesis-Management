@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
 from mainapp.EmailBackEnd import EmailBackEnd
 
 
@@ -17,7 +16,6 @@ def loginPage(request):
         return render(request, 'login.html')
     else:
         return redirect('admin_home')
-
 
 
 def doLogin(request):
@@ -48,17 +46,13 @@ def doLogin(request):
             return redirect('login')
 
 
-
 def get_user_details(request):
     if request.user != None:
-        return HttpResponse("User: "+request.user.email+" User Type: "+request.user.user_type)
+        return HttpResponse("User: " + request.user.email + " User Type: " + request.user.user_type)
     else:
         return HttpResponse("Please Login First")
-
 
 
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
-
-

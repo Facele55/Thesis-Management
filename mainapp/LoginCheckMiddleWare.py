@@ -4,13 +4,13 @@ from django.urls import reverse
 
 
 class LoginCheckMiddleWare(MiddlewareMixin):
-    
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         modulename = view_func.__module__
         # print(modulename)
         user = request.user
 
-        #Check whether the user is logged in or not
+        #  Check whether the user is logged in or not
         if user.is_authenticated:
             if user.user_type == "1":
                 if modulename == "mainapp.HodViews":

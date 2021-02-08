@@ -1,20 +1,11 @@
 from smtplib import SMTPException
 
-from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib import messages
-from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
-from django.template.loader import render_to_string
-from django.urls import reverse
-import datetime  # To Parse input DateTime into Python Date Time Object
-from django.shortcuts import render
 from django.conf import settings
-from django.utils.functional import SimpleLazyObject
+from django.contrib import messages
+from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import redirect
+from django.shortcuts import render
 
-from djangoProject4.settings import EMAIL_HOST_USER
-from . import forms
-from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
 from mainapp.models import *
 
 
