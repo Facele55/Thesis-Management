@@ -25,7 +25,8 @@
                                 <table class="table">
                                     <thead class="thead-light">
                                     <tr>
-                                        <th>Recipient</th>
+                                        <th>Recipient name</th>                                    	
+                                        <th>Recipient email</th>
                                         <th>Topic</th>
                                         <th>Status</th>
                                     </tr>
@@ -35,6 +36,9 @@
                                         {% if row.sender_id.id == student.id %}
 
                                     <tr>
+                                    	<td>{% for st in staff %} {% if row.recipient == st.admin.email  %} {{ st.admin.last_name }}   {{ st.admin.first_name }} {% endif %}
+                                    	{% endfor %}</td>
+                                    	
                                         <td>{{ row.recipient }} </td>
                                         <td>{{ row.message }}</td>
                                         <td>
