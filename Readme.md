@@ -1,42 +1,27 @@
-I used PyCharm 
+## Thesis Management it's a project used to help students and proffesors maintain thesis topics, grades
+
 
 Install the requirements:
-
-```bash
 
 pip install -r requirements.txt
 
 
-Create the database:
+Create the database
+Run migrations:
 
-```bash
-
-python3 manage.py migrate
+- python3 manage.py makemigrations
+- python3 manage.py migrate
 
 
 Finally, run the development server:
 
-```bash
-
-python3 manage.py runserver
-
+- python3 manage.py runserver
 
 The project will be available at **127.0.0.1:8000**.
 
 
-credentials for admin:
-email: admin@gmail.com
-password: admin
-
-for staff:
-email: staff@gmail.com
-password: staff
-
-for student:
-email: student@gmail.com
-password: student
-
 To see how it looks see scrrenshots:
-For Student Home: student_home.png
+For Student Home: 
+![Student Home](student_home.png, "Student Home")
 For Admin Home: admin_home.png
 For Staff Home: Staff_home.png
