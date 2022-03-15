@@ -6,7 +6,8 @@ Install the requirements:
 pip install -r requirements.txt
 
 
-Create the database
+Create the database with name 
+
 Run migrations:
 
 - python3 manage.py makemigrations
@@ -21,7 +22,11 @@ The project will be available at **127.0.0.1:8000**.
 
 
 To see how it looks see scrrenshots:
-For Student Home: 
-![Student Home](student_home.png, "Student Home")
-For Admin Home: admin_home.png
-For Staff Home: Staff_home.png
+# For Admin Home: 
+![Admin Home](admin_home.png)
+
+# For Staff Home: 
+![Staff Home](Staff_home.png)
+
+# For Student Home: 
+![Student Home](./student_home.png "Student Home")
